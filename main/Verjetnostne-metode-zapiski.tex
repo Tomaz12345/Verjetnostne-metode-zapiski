@@ -1,0 +1,379 @@
+\documentclass[a4paper, 12pt]{book}
+
+\usepackage{fancyhdr}
+
+\newcommand{\ttitle}{Verjetnostne metode v računalništvu - zapiski s predavanj prof. Marca}
+\newcommand{\ttitleshort}{Verjetnostne metode v računalništvu}
+\newcommand{\tauthor}{Tomaž Poljanšek}
+\newcommand{\tdate}{študijsko leto 2023/24}
+
+\usepackage{color}
+\usepackage{soul}
+\usepackage[numbers]{natbib}
+
+\usepackage{physics}
+
+\usepackage[parfill]{parskip}
+\usepackage[hyphens]{url}
+
+\usepackage[usestackEOL]{stackengine}[2013-10-15] % formatting Pascal
+\usepackage[dvipsnames]{xcolor}
+
+\usepackage{cancel}
+\usepackage[export]{adjustbox}
+
+% Related to math
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{mathtools}
+\usepackage{youngtab}
+\usepackage{tikz}
+
+% encoding and language
+\usepackage{lmodern}
+\usepackage[slovene, english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% multiline comments
+\usepackage{comment}
+\usepackage{verbatim}
+
+% random text - for texting
+\usepackage{lipsum}
+\usepackage{blindtext}
+
+\usepackage{hyperref}
+
+% images
+\usepackage{graphicx}
+\graphicspath{ {../images/} }
+
+% no blank page
+\usepackage{atbegshi}
+\renewcommand{\cleardoublepage}{\clearpage}
+%\renewcommand{\clearpage}{}
+
+\usepackage{listings}
+\usepackage{verbatim}
+%\usepackage{fancyvrb}
+%\usepackage{bera}
+
+\newcommand*\Eval[3]{\left.#1\right\rvert_{#2}^{#3}}
+
+\lstset{basicstyle=\ttfamily,
+escapeinside={||},
+mathescape=true}
+
+% theorems
+\theoremstyle{definition}
+\newtheorem{counter}{Counter}[section]
+\newtheorem{defn}[counter]{Definicija}
+\newtheorem{lemma}[counter]{Lema}
+\newtheorem{conseq}[counter]{Posledica}
+\newtheorem{claim}[counter]{Trditev}
+\newtheorem{theorem}[counter]{Izrek}
+\newtheorem{pro}[counter]{Dokaz}
+%%
+\theoremstyle{remark}
+\newtheorem*{ex}{Primer}
+\newtheorem*{exmp}{Zgled}
+\newtheorem*{rem}{Opomba}
+
+% QED
+\renewcommand\qedsymbol{$\blacksquare$}
+
+\hypersetup{pdftitle={\ttitle}}
+
+\addtolength{\marginparwidth}{-20pt}
+\addtolength{\oddsidemargin}{40pt}
+\addtolength{\evensidemargin}{-40pt}
+
+\renewcommand{\baselinestretch}{1.3}
+\setlength{\headheight}{15pt}
+\renewcommand{\chaptermark}[1]
+{\markboth{\MakeUppercase{\thechapter.\ #1}}{}} \renewcommand{\sectionmark}[1]
+{\markright{\MakeUppercase{\thesection.\ #1}}} \renewcommand{\headrulewidth}{0.5pt} \renewcommand{\footrulewidth}{0pt}
+
+% header
+\fancyhf{}
+\fancyhead[LE,RO]{\sl \thepage} 
+\fancyhead[RE]{\sc \tauthor}
+\fancyhead[LO]{\sc \ttitleshort}
+
+
+\newcommand{\autfont}{\Large}
+\newcommand{\titfont}{\LARGE\bf}
+\newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}
+\setcounter{tocdepth}{1}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\ch}{\operatorname{char}}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{icomma}
+\usepackage{tabularx}
+\usepackage{hhline}
+
+\usepackage{enumitem}
+\usepackage{ulem}
+\newcommand{\msout}[1]{\text{\sout{\ensuremath{#1}}}} % cross text in math mode
+
+\usepackage{alltt}
+
+\title{\ttitle}
+\author{\tauthor}
+\date{\tdate}
+
+\newcommand\mymaketitle{
+  \begin{titlepage}
+    \begin{center}
+        \vspace*{4cm}
+        \Huge
+        \textbf{\ttitle}
+                        
+        \vspace{1.5cm}
+        \huge
+        \tauthor
+            
+        \vspace{3cm}
+        \Large
+        \tdate
+    \end{center}
+  \end{titlepage}
+}
+
+
+
+
+\begin{document}
+
+\selectlanguage{slovene}
+%\setcounter{page}{1}
+\renewcommand{\thepage}{}
+\newcommand{\sn}[1]{"`#1"'}
+
+\mymaketitle
+
+\clearpage
+%\AtBeginShipoutNext{\AtBeginShipoutDiscard}
+
+\frontmatter
+
+% kazalo
+\pagestyle{empty}
+\def\thepage{}
+\tableofcontents{}
+
+%%
+\def\x{\hspace{3ex}}    %BETWEEN TWO 1-DIGIT NUMBERS
+\def\y{\hspace{2.45ex}}  %BETWEEN 1 AND 2 DIGIT NUMBERS
+\def\z{\hspace{1.9ex}}    %BETWEEN TWO 2-DIGIT NUMBERS
+\stackMath
+
+%\clearpage
+%\phantomsection
+%\addcontentsline{toc}{chapter}{Povzetek}
+%\chapter*{Povzetek}
+
+%Predloga.
+
+%\newpage
+
+\pagenumbering{arabic}
+
+\mainmatter
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+
+% 1. predavanje: 6.10.
+
+
+\chapter{Introduction}
+
+
+\section{Probability}
+
+$(\Omega, F, P_r)$:
+\begin{itemize}[label=$\circ$]
+  \item $\emptyset \in F$,
+  \item $A \in F \implies A^c \in F$,
+  \item $A_1, A_2 \dots \in F \implies \cup_{i=1}^{\infty} A_i \in F$.
+\end{itemize}
+$P_r(A) \geq 0$, \\
+$P_r\left(\cup_{i=1}^{\infty} A_i\right) = \sum_{i=1}^{\infty} P_r(A_i)$ if $A_i$ disjoint, \\
+$P_r\left(\cup_{i=1}^{\infty} A_i\right) \leq \sum_{i=1}^{\infty} P_r(A_i)$, \\
+$\Omega = \{\omega_1, \omega_2 \dots\}$ - countable case. \\
+$\begin{pmatrix}
+  \omega_1 & \omega_2 & \dots \\
+  p_1 & p_2 & \dots
+\end{pmatrix}$
+\begin{ex} \text{}
+  \begin{verbatim}
+    Alg():
+      while True:
+        B = sample as random from {0,1}  # 1 with probability p
+        if B = 1:
+          return
+  \end{verbatim}
+  $\Omega = \{1, 01, 001, 0001 \dots\}$ \\
+  $\begin{pmatrix}
+    1 & 01 & 001 & 0001 & \dots \\
+    p & (1-p)p & (1-p)^2 p & (1-p)^3p & \dots
+  \end{pmatrix}$.
+\end{ex}
+
+
+\section{Random variables}
+
+$X: \Omega \to \Z$. \\
+$E[X] = \sum_{c \in \Z} c \cdot P_r(X = c)$ expected value of $X$. \\
+Properties:
+\begin{itemize}[label=$\circ$]
+  \item $E[f(X)] = \sum_{c \in \Z} f(c) \cdot P_r(X = c)$,
+  \item $E[aX + bY] = aE[X] + bE[Y]$,
+  \item $E[X \cdot Y] = E[X] \cdot E[Y]$ if $X, Y$ indepentent,
+  \item $P_r(X \geq a) \leq \frac{E[X]}{a} \; \forall a > 0 \; X \geq 0$ Markov inequality.
+\end{itemize}
+\begin{ex}
+  (Continuing from before). \\
+  $X =$ number of trials before return. \\
+  $X: \Omega \to \Z$. \\
+  $X: 1 \to 1, 01 \to 2, 003 \to 3 \dots$ \\
+  $\begin{pmatrix}
+    1 & 2 & 3 & 4 & \dots \\
+    p & (1-p)p & (1-p)^2 p & (1-p)^3p & \dots
+  \end{pmatrix}$ - geometric distribution.
+\end{ex}
+\begin{claim}
+  $E[X] = \frac{1}{p}$.
+\end{claim}
+\begin{pro}
+  $X = \sum_{i=1}^{\infty} X_i$. \\
+  $X_i = \begin{cases}
+    1 \text{ if trial $i$ is executed} \\
+    0 \text{ else}
+  \end{cases}$ \\
+  \begin{align*}
+    E[X] &= E[\sum_{i=1}^{\infty} X_i] = \sum_{i=1}^{\infty} E[X_i] = \\
+    &= \sum_{i=1}^{\infty} (1-p)^{i-1} = \frac{i=0}{\infty} (1-p)^i = \frac{1}{1-(1-p)} = \frac{1}{p}.
+  \end{align*}
+\end{pro}
+$E[X] = \frac{1}{p}$. \\
+$P_r(X \geq 100 \cdot \frac{1}{p}) \leq \frac{E[X]}{\frac{1}{p}} = \frac{1}{100}$.
+\begin{defn}
+  $H_n = 1 + \frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{n} = \sum_{i=1}^{\infty} \frac{1}{i}$.
+\end{defn}
+\begin{theorem}
+  $H_n \leq 1 + \ln(n)$.
+\end{theorem}
+\begin{pro}
+  \begin{equation*}
+    H_n = 1 + \sum_{i=2}^{n} \frac{1}{i} \stackrel{\text{integral}}{\leq}
+    1 + \int_{1}^{n} \frac{dx}{x} = 1 + \Eval{\ln(x)}{1}{n} = 1 + \ln(n).
+  \end{equation*}
+  % skica
+\end{pro}
+
+
+
+\chapter{Quicksort, min-cut}
+
+
+\section{Quicksort}
+
+\begin{alltt}
+  Input: set (no equal element) (unordered list) S\(\in\R\)
+      (or whatever you can compare linearly)
+  Output: ordered list
+  Code:
+    def Quicksort(S):
+      if |S|= 0 or 1:
+        return S
+      else:
+        a = uniformly at random from S
+        S\(\sp{-}\) = \{b \(\in\) S | b < a\}
+        S\(\sp{+}\) = \{b \(\in\) S | a < b\}
+        return Quicksort(S\(\sp{-}\)), a, Quicksort(S\(\sp{+}\))
+\end{alltt}
+% skica
+$C(n)$ - random variable, the number of comparisons in evaluation of Quicksort with $|S| = n$.
+\begin{theorem}
+  $E[C(n)] = O(N \log(n))$.
+\end{theorem}
+\begin{pro}
+  $C(0) = C(1) = 0$. \\
+  \begin{align*}
+    E[C(n)] &= n - 1 + \sum_{i=1}^{n} \left(E[C(i-1)] + E[C(n-i)]\right) \cdot P_r(a \text{ is $i$-it element}) \leq \\
+    &\leq n + \frac{2}{n} \sum_{i=1}^{n-1} E[C(i)].
+  \end{align*}
+  Induction: \\
+  $n = 1: \checkmark$ \\
+  $n-1 \to n$:
+  \begin{align*}
+    E[C(n)] &\leq n + \frac{2}{n} \sum_{i=1}^{n} E[C(i)] \leq \\
+    &\leq n + \frac{2}{n} \sum_{i=1}^{n} 5i \log i \leq \\
+    &\leq n + \frac{2}{n} \sum_{i=1}^{\lfloor\frac{n}{2}\rfloor} 5i \log i +
+      \frac{2}{n} \sum_{i=1+\lfloor\frac{n}{2}\rfloor}^{n-1} 5i \log i \leq \\
+    &\leq n + \frac{2}{n} \sum_{i=1}^{\lfloor\frac{n}{2}\rfloor} 5i \log \frac{n}{2} +
+      \frac{2}{n} \sum_{i=1+\lfloor\frac{n}{2}\rfloor}^{n-1} 5i \log n \leq \\
+    (\log \frac{n}{2} &= \log n - 1) \\
+    &\leq n + \frac{2}{n} \left(\sum_{i=1}^n 5i \log n - \sum_{i=1}^{\frac{n}{2}} 5i\right) = \\
+    &= n + \frac{10}{n} \left(\frac{n(n-1)}{2} \log n - \frac{\frac{n}{2} (\frac{n}{2} + 1)}{2}\right) \leq \\
+    &\leq n + 5(n-1) \log n - n < \\
+    &< 5n \log n.
+  \end{align*}
+\end{pro}
+$P\left(C(n) \geq b \cdot 5n \log n\right) \stackrel{\text{Markov}}{\leq} \frac{1}{b}$.
+\begin{pro} \text{} \\
+  2: \\
+  Let $S_1, S_2 \dots S_n$ sorted elements of $S$. \\
+  Define random variable
+  $X_{ij} = \begin{cases}
+    1 \text{ if $S_i$ and $S_j$ are compared} \\
+    0 \text{ else}
+  \end{cases}$ \\
+  $C(n) = \sum_{1 \leq i < j \leq n} E[X_{ij}]$. \\
+  $E[X_{ij}] = P(S_i$ and $X_j$ compared$)$. \\
+  % skica
+  $S_{ij}$ - the last set including $S_i$ and $S_j$. \\
+  $E[X_{ij}] = \frac{2}{|S_{ij}|} \leq \frac{2}{j-i+1}$. \\
+  $|S_{ij}| \geq j - i + 1$. \\
+  $S_{ij}$ has everything in between. \\
+  \begin{align*}
+    \implies E[C(n)] &\leq \sum_{1 \leq i < j \leq n} \frac{2}{j-i+1} = \\
+    &\stackrel{k=j-i+1}{=} \sum_{i=1}^{n-1} \sum_{k=2}^{n-i+1} \frac{2}{k} \leq \\
+    &\leq 2 \cdot n \cdot H_n \leq \\
+    &\leq 2 n (1 + \log n).
+  \end{align*}
+\end{pro}
+
+
+
+\clearpage
+\phantomsection
+
+\addcontentsline{toc}{chapter}{Literatura}
+\bibliography{../bibtex/literatura}
+\bibliographystyle{plainnat}
+
+
+\clearpage
+\phantomsection
+
+%\chapter*{Dodatki}
+%\addcontentsline{toc}{chapter}{Dodatki}
+%D.
+
+
+
+
+\end{document}
