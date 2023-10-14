@@ -240,7 +240,7 @@ Properties:
 \begin{itemize}[label=$\circ$]
   \item $E[f(X)] = \sum_{c \in \Z} f(c) \cdot P_r(X = c)$,
   \item $E[aX + bY] = aE[X] + bE[Y]$,
-  \item $E[X \cdot Y] = E[X] \cdot E[Y]$ if $X, Y$ indepentent,
+  \item $E[X \cdot Y] = E[X] \cdot E[Y]$ if $X, Y$ independent,
   \item $P_r(X \geq a) \leq \frac{E[X]}{a} \; \forall a > 0 \; X \geq 0$ Markov inequality.
 \end{itemize}
 \begin{ex}
@@ -307,7 +307,7 @@ $P_r(X \geq 100 \cdot \frac{1}{p}) \leq \frac{E[X]}{\frac{1}{p}} = \frac{1}{100}
 % skica
 $C(n)$ - random variable, the number of comparisons in evaluation of Quicksort with $|S| = n$.
 \begin{theorem}
-  $E[C(n)] = O(N \log(n))$.
+  $E[C(n)] = O\left(N \log(n)\right)$.
 \end{theorem}
 \begin{pro}
   $C(0) = C(1) = 0$. \\
@@ -357,17 +357,177 @@ $P\left(C(n) \geq b \cdot 5n \log n\right) \stackrel{\text{Markov}}{\leq} \frac{
 \end{pro}
 
 
+% 2. predavanje: 13.10.
 
-\clearpage
-\phantomsection
+\section{Min-cut}
 
-\addcontentsline{toc}{chapter}{Literatura}
-\bibliography{../bibtex/literatura}
-\bibliographystyle{plainnat}
+$G$ multigraph. \\
+Cut: $U \subset V(G), \; U \neq \emptyset, V(g)$. \\
+$(U, V(G) \setminus U) = \{uv \in E(G) \mid u \in U, v \in V(G) \setminus U\}$. \\
+% skica
+Problem min-cut: \\
+Input: $G$. \\
+Output: $\min |(U, V(G) \setminus U)|$ - cut size.
+\begin{alltt}
+  Algorithm 1:
+    x \(\in\) V(G)
+    Call maxFlow(G, x, y) \(\forall y \in V(G)\)
+    Take min
+\end{alltt}
+$maxFlow$ is Edmonds-Karp algorithm $O\left(|V| |E|^2\right)$. \\
+\begin{alltt}
+  Algorithm 2 (Stoer Wagner)
+\end{alltt}
+Is $O\left(|E| |V| + |V| log |V|\right)$.
+\begin{alltt}
+  Algorithm randMinCut:
+    G\(\sb_{0}\) = G
+    i = 0
+    while |V(G\(\sb{i}\))| > 2:
+      e\(\sb{i}\) = uniformly at random from G\(\sb{i}\)
+      G\(\sb{i+1}\) = G\(\sb{i}\) / \(\sb{e\sb{i}}\)
+      i = i + 1
+    u, v = V(G\(\sb{n-2}\)) // n = |V(G)|
+    U = \{w \(\in\) V(G) | w is merged into u\}
+    return (U, V(G) \textbackslash U)
+\end{alltt}
+\begin{theorem}
+  Algorithm $randMinCut$ gives you a minimal cut with probability greater or equal to $\frac{2}{n(n-1)}$.
+\end{theorem}
+\begin{pro} \text{} \\
+  Fact 1: $minCut(G_i) \leq minCut(G_i)$;
+  \begin{itemize}[label={}]
+    %\item $\leq$: %example
+    \item $\ngtr$: $minCut$ remains.
+  \end{itemize}
+  Fact 2: $minCut(G) \leq \delta(G)$. \\
+  $k := minCut(G)$. \\
+  Let $(A,B)$ be an optimal cut. \\
+  $\epsilon_i$ not in $(A,B)$.
+  \begin{align}
+    &P_r(\text{Algorithm not returning } (A,B)) \nonumber \\
+    &= P_r(\epsilon_0 \cap \dots \cap \epsilon_{n-3}) \nonumber  \\
+    &= P_r(\epsilon_0 \cap \dots \cap \epsilon_{n-4}) \cdot
+      P_r(\epsilon_{n-3} \mid \epsilon_0 \cap \dots \cap \epsilon_{n-4}) \nonumber  \\
+    &= P_r(\epsilon_{n-3} \mid \cap_{i=0}^{n-4} \epsilon_i) \cdot
+      P_r(\epsilon_{n-3} \mid \cap_{i=0}^{n-4} \epsilon_i) \nonumber \\
+    &\dots P_r(\epsilon_1 \mid \epsilon_0) \cdot P_r(\epsilon_0). (*) %\label{randMinCut-mid}
+  \end{align}
+  \begin{equation*}
+    P_r(\overline{\epsilon_i} \mid \epsilon_{i-1} \cap \dots \cap \epsilon_0) =
+      %\frac{k}{|E(G_i)|} \stackrel{\text{\refeq{E-gi}}}{\leq} \frac{k}{\frac{(n-i)k}{2}} = \frac{2}{n-i}
+      \frac{k}{|E(G_i)|} \stackrel{\text{(**)}}{\leq} \frac{k}{\frac{(n-i)k}{2}} = \frac{2}{n-i}
+  \end{equation*}
+  \begin{equation}
+    |E(G_i)| \geq \frac{(n-i) \delta(G)}{2} \geq \frac{(n-i)k}{2}. (**) % \label(E-gi)
+  \end{equation}
+  \begin{equation*}
+    P_r(\epsilon_i \mid \epsilon_{i-1} \cap \dots \cap \epsilon_0) \geq 1 - \frac{2}{n-i} = \frac{n-2-i}{n-i}.
+  \end{equation*}
+  \begin{equation*}
+    %\text{\ref{randMinCut-mid}} \geq \frac{n-2}{n} \cdot \frac{n-3}{n-1} \dots \frac{1}{3} = \frac{2}{n(n-1)}.
+    (*) \geq \frac{n-2}{n} \cdot \frac{n-3}{n-1} \dots \frac{1}{3} = \frac{2}{n(n-1)}.
+  \end{equation*}
+\end{pro}
+\begin{theorem}
+  Running $randMinCut \; n(n-1)$ times and taking best output gives correct solution with probability $\geq 0.86$.
+\end{theorem}
+\begin{pro}
+  $A_i$ - event that $i$-th run gives sub-optimal solution.
+  \begin{align*}
+    P_r(\text{solution not correct}) &= P_r(A_1 \cap \dots \cap A_{n(n-1)}) \\
+    &= \prod_{i=1}^{n(n-1)} P_r(A_i) \leq (1 - \frac{2}{n(n-1)})^{n(n-1)} \\
+    &\leq e^{-\frac{2}{n(n-1)} \cdot n(n-1)} = e^{-2} \leq 0.14.
+  \end{align*}
+  $1 - x \leq e^x \; \forall x \in \R$.
+\end{pro}
+If we run $n(n-1) log(n)$ times $\to O\left(\frac{1}{n}\right)$. \\
+$O\left(n^2 \log n \cdot n\right)$. \\
+Improved: $O\left(n^2 \log^3 n\right)$.
 
 
-\clearpage
-\phantomsection
+
+\chapter{Complexity classes}
+
+
+Decision problem - yes/no question on a set of inputs = asking $w \in \Pi$. \\
+Randomized algorithms:
+\begin{itemize}
+  \item Las Vegas algorithms: always gives correct solution, example: $Quicksort$.
+  \item Monte Carlo algorithms: it can give wrong answers.
+    Monte Carlo algorithms subtypes:
+    \begin{itemize}
+      \item type(1): $\begin{cases}
+          \text{if } \omega \in \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } \geq \frac{1}{2} \\ 
+          \text{if } \omega \notin \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } = 0 
+        \end{cases}$
+      \item type(2): $\begin{cases}
+          \text{if } \omega \in \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } = 1 \\ 
+          \text{if } \omega \notin \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } \leq \frac{1}{2} 
+        \end{cases}$
+      \item type(3): $\begin{cases}
+          \text{if } \omega \in \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } \geq \frac{3}{4} \\ 
+          \text{if } \omega \notin \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } \leq \frac{1}{2}
+        \end{cases}$
+    \end{itemize}
+    type(1) and type(2): one-sided error, type(3): 2-sided error. \\
+    $\frac{1}{2}, \frac{3}{4}$ and $\frac{1}{4}$ arbitrary numbers, can be something different (for type(3) better than coin flip).
+\end{itemize}
+\begin{ex}
+  Decisional problem: does a graph $G$ have $minCut \leq k$? \\
+  Run $randMinCut(G) \; n(n-1)$ times.
+  \begin{alltt}
+    Algorithm randMinCut:
+      if one of runs gives |(A,B)| \(\leq\) k:
+        return true
+      else:
+        return false
+  \end{alltt}
+\end{ex}
+Complexity classes:
+\begin{itemize}
+  \item RP (randomized polynomial time): decisional problems for which there exists Monte Carlo algorithm of type(1)
+    with polynomial time complexity (worst case).
+  \item co-RP: decisional problems for which there exists Monte Carlo algorithm of type(2) with polynomial time complexity
+    (worst case).
+  \item BRP (bounded-error probabilistic polynomial time): decisional problems for which there exists Monte Carlo algorithm of type(3)
+    with polynomial time complexity (worst case).
+  \item ZPP (zero-error probabilistic polynomial time): decisional problems for which there exists Las Vegas algorithm
+    with expected polynomial time complexity (worst case).
+\end{itemize}
+% skica
+ZPP = RP $\cap$ co-RP.
+
+
+
+\chapter{Chernoff bounds}
+
+
+\begin{theorem}
+  Let $X_1, X_2 \dots X_n$ independent random variables with image $\{0, 1\}$. \\
+  Let $p_i = P_r(X_i = x_i), X = \sum_{i=1}^{n} X_i$ and $\mu = E(X) = p_1 + \dots + p_n$. \\
+  For every $\delta \in (0,1)$:
+  \begin{align*}
+    &P_r(X - \mu \geq \delta \mu) \leq e^{-\frac{\delta^2 \mu}{3}} \\
+    &P_r(\mu - X \leq \delta \mu) \leq e^{-\frac{\delta^2 \mu}{2}} \\
+    \implies &P_r(|X - \mu| \geq \delta \mu) \leq e^{-\frac{\delta^2 \mu}{3}}. \\
+  \end{align*}
+\end{theorem}
+% skica
+Probability falls extremely quickly after $E(X)$.
+
+
+
+%\clearpage
+%\phantomsection
+
+%\addcontentsline{toc}{chapter}{Literatura}
+%\bibliography{../bibtex/literatura}
+%\bibliographystyle{plainnat}
+
+
+%\clearpage
+%\phantomsection
 
 %\chapter*{Dodatki}
 %\addcontentsline{toc}{chapter}{Dodatki}
