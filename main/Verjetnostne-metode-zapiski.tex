@@ -517,6 +517,145 @@ ZPP = RP $\cap$ co-RP.
 Probability falls extremely quickly after $E(X)$.
 
 
+% 3. predavanje: 20.10.
+
+\begin{pro}
+  \begin{align*}
+    P_r(X - \mu \geq \delta \mu) &= P_r(X \geq \mu(1+\delta)) \\
+    &\stackrel{t>0}{=} P_r(tX \geq t\mu(1+\delta)) \\
+    &\stackrel{e^y>0}{=} P_r(e^{tX} \geq e^{t\mu(1+\delta)}) \\
+    &\stackrel{\text{Markov}}{\leq} \frac{E\left(e^{tX}\right)}{e^{t\mu(1+\delta)}} \\
+    &\stackrel{\refeq{eq:et_x}}{\leq} \frac{e^{(e^t-1)\mu}}{e^{t\mu(1+\delta)}} \\
+    &\stackrel{\refeq{eq:leq_in_exp}}{\leq} e^{-\mu \frac{\delta^2}{3}}.
+  \end{align*}
+  \begin{align}
+    E(e^{tX}) &= E(e^{tX_1 + \dots + tX_n}) \nonumber \\
+    &= E(e^{tX_1} \dots e^{tX_n}) \nonumber \\
+    &\stackrel{\text{independent}}{=} \prod_{i=1}^{n} E(e^{tX_i}) \nonumber \\
+    &\stackrel{\refeq{eq:et_xi}}{\leq} \prod_{i=1}^{n} e^{p_i(e^t-1)} \nonumber \\
+    &= e^{(e^t-1) \sum_{i=1}^{n}p_i} \nonumber \\
+    &= e^{(e^t-1)\mu} \label{eq:et_x}.
+  \end{align}
+  \begin{equation}
+    E(e^{tX_i}) = p_i \cdot e^t + (1-p_i) \cdot e^0 = 1+p_i(e^t-1) \stackrel{1+x\leq e^x}{\leq} e^{p_i(e^t-1)}.
+    \label{eq:et_xi}
+  \end{equation}
+  Want:
+  \begin{equation}
+    e^t - 1 - t(1+\delta) \leq -\frac{\delta^2}{3} \; \forall \delta \in (0,1) \label{eq:leq_in_exp}
+  \end{equation}
+  \begin{align*}
+    &t = \ln(1+\delta) \\
+    &f(\delta) = 1 + \delta - 1 - (1+\delta) \ln(1+\delta) + \frac{\delta^2}{3} \stackrel{?}{\leq} 0 \\
+    &f(0) = 0 \\
+    &f^{'}(\delta) = 1 - \ln(1+\delta) - 1 + \frac{2}{3} \delta = \frac{2}{3} \delta - \ln(1+\delta) \stackrel{?}{\leq} 0 \\
+    &\frac{2}{3} \delta \leq \ln(1+\delta) \\
+    % skica
+    &\delta=1: \; \frac{2}{3} \stackrel{?}{\leq} \ln(2) \approx 0.69 \checkmark
+  \end{align*}
+  \begin{align*}
+    P_r(\mu - X \leq \delta \mu) &= P_r(X \geq \mu(1-\delta)) \\
+    &\stackrel{t>0}{=} P_r(tX \geq t\mu(1-\delta)) \\
+    &\stackrel{e^y>0}{=} P_r(e^{tX} \geq e^{t\mu(1-\delta)}) \\
+    &\leq \dots \leq \frac{e^{(e^t-1)\mu}}{e^{t\mu(1-\delta)}}.
+  \end{align*}
+  Want: $e^t - 1 - t(1-\delta) \leq -\frac{\delta^2}{2} \; \forall \delta \in (0,1)$:
+  \begin{align*}
+    &t = \ln(1-\delta) \\
+    &f(\delta) = 1 - \delta - 1 - (1-\delta) \ln(1-\delta) + \frac{\delta^2}{2} \stackrel{?}{\leq} 0 \\
+    &f(0) = 0 \\
+    &f^{'}(\delta) = - 1 + 1 - \ln(1-\delta) + \delta \stackrel{?}{\leq} 0 \\
+    &\frac{2}{3} \delta \leq \ln(1+\delta) \\
+    &\ln(1-\delta) \stackrel{?}{\leq} -\delta \checkmark
+    % skica
+  \end{align*}
+  \qed
+\end{pro}
+$X_i \sim \begin{pmatrix}0 & 1 \\ \frac{1}{2} & \frac{1}{2}\end{pmatrix}$ \\
+$X = \sum_{i=1}^{n} X_i$ \\
+$\mu = \frac{n}{2}$
+\begin{align*}
+  P_r(|X-\mu| \geq \sqrt{\frac{3}{2}n \ln(n)}) &= P_r(|X-\mu| \geq \frac{n}{2} \sqrt{\frac{6}{n} \ln(n)}) \\
+  &\quad \mu = \frac{n}{2}, \delta = \sqrt{\frac{6}{n} \ln(n)}, \\
+  &\quad \text{for \sn{big} }n \delta \in (0,1) \\
+  &\stackrel{\text{Chernoff}}{\leq} 2 e^{-\frac{\frac{n}{2} \frac{6}{n} \ln(n)}{3}} = \frac{2}{n}.
+\end{align*}
+$d = \sqrt{\frac{3}{2}n \ln(n)}$
+% skica
+\begin{equation*}
+  \implies P_r(X \in (\mu - \sqrt{\frac{3}{2}n \ln(n)}, \mu + \sqrt{\frac{3}{2}n \ln(n)})) \geq 1 - \frac{2}{n}.
+\end{equation*}
+% skica
+\begin{claim} \text{} \\
+  Let $X_1, X_2 \dots$ independent random variables with image $\{0,1\}$. \\
+  $P_r(X_i = 1) = \frac{1}{2} \; \forall i$. \\
+  Let $X = \sum_{i=1}^{cm} X_i$ where $c \geq 4$. \\
+  Then $P_r(X \leq m) \leq e^{-\frac{cm}{16}}$.
+\end{claim}
+\begin{pro}
+  \begin{align*}
+    P_r(X \leq m) &= P_r(\frac{cm}{2} - X \geq \frac{cm}{2} - m) \\
+    &= P_r(\frac{cm}{2} - X \geq \frac{cm}{2} (1 - \frac{2}{c})) \\
+    &\stackrel{\text{Chernoff}}{\leq} e^{-\frac{\frac{cm}{2} (1-\frac{2}{c})^2}{2}} \\
+    &\quad 1-\frac{2}{c} \geq \frac{1}{2} \text{ if } c \geq 4 \\
+    &\leq e^{-\frac{\frac{cm}{2} \frac{1}{4}}{2}} = e^{-\frac{cm}{16}}.
+  \end{align*}
+  \qed
+\end{pro}
+Back to Quicksort.
+\begin{theorem} \text{} \\
+  With probability $\geq 1 - \frac{1}{n}$ Quicksort uses at most $48n\ln(n)$ comparisons.
+\end{theorem}
+\begin{pro} \text{} \\
+  % skica (i)
+  For $s \in S$ define $S_1^S \dots S_{t_s}^S \neq \emptyset$ sets that include $s$,
+  $t_s$ - number of comparisons with $s$ where $s$ is not a pivot $+1$. \\
+  Define: iteration $i$ is successful if $|S_{i+1}| \leq \frac{3}{4} |S_i|$ ($\frac{1}{2}$ is too strict).
+  \begin{equation*}
+    X_i = \begin{cases}
+      1 \text{ if iteration } i \text{ is successful} \\
+      0 \text{ else}
+    \end{cases}
+  \end{equation*}
+  % skica (i)
+  $P_r(X_i = 1) \geq \frac{1}{2}$ \\
+  $S_i: n \to \frac{3}{4} n \to (\frac{3}{4})^2 n \to \dots \to 1$. \\
+  Notice: max number of iteration is $\log_{\frac{4}{3}}(n) = \frac{\ln(n)}{\ln(4)-\ln(3)}$. \\
+  Probability that we haven't succeeded in $\log_{\frac{4}{3}}(n)$ steps:
+  \begin{align}
+    P_r(\sum_{i=1}^{c \log_{\frac{4}{3}}(n)} X_i < \log_{\frac{4}{3}}(n)) &\leq
+      P_r(\sum_{i=1}^{c \log_{\frac{4}{3}}(n)} Y_i < \log_{\frac{4}{3}}(n)) \label{eq:X_to_Y} \\
+    &\stackrel{\text{Chernoff}}{<} e^{-\frac{c \log_{\frac{4}{3}}(n)}{24}} \\
+    &= e^{-\frac{c \ln(n) \log_{\frac{4}{3}}(e)}{24}} \\
+    &= \frac{1}{n} \frac{c \log_{\frac{4}{3}}(e)}{24} \\
+    &\quad \log_{\frac{4}{3}}(e) \approx 3.4, \; c=14 \\
+    &\leq \left(\frac{1}{n}\right)^2
+  \end{align}
+  \refeq{eq:X_to_Y} because $X_i$ not independent,
+  $Y_i \sim \begin{pmatrix}0 & 1 \\ \frac{1}{2} & \frac{1}{2}\end{pmatrix}$ independent. \\
+  $P_r(t_s \geq c \log_{\frac{4}{3}}(n)) \geq \left(\frac{1}{n}\right)^2$ for one $s$. \\
+  $c=14 \implies$ at least $48 \ln(n)$ iterations with probability $\leq \left(\frac{1}{n}\right)^2$. \\
+  With probability as least $1-\frac{1}{n}$ for all $s \in S$ it holds that $s$ has $\leq 48 \ln(n)$ comparisons with a pivot. \\
+  $\implies$ total number of comparisons $n \cdot 48 \ln(n)$ with probability as least $1 - \frac{1}{n}$.
+  \qed
+\end{pro}
+
+
+\section{Monte Carlo methods}
+
+\subsection{Example 1}
+
+% skica
+Area of circle $= \frac{\pi}{4}$. \\
+$X_i = \begin{cases}
+  1 \text{ if you hit the area of circle} \\
+  0 \text{ else}
+\end{cases}$ \\
+$P_r(X_i = 1) = \frac{\frac{\pi}{2}}{1} = \frac{\pi}{4}$. \\
+$E(X_i) = \frac{\pi}{4}$. \\
+$X = \frac{\sum_{i=1}^{n} X_i}{n}$. \\
+$E(X) = \frac{n \cdot E(X_i)}{n} = E(X_i)$.
+
 
 %\clearpage
 %\phantomsection
