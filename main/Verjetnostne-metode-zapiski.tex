@@ -111,6 +111,7 @@ mathescape=true}
 \newcommand{\Q}{\mathbb{Q}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
 \newcommand{\ch}{\operatorname{char}}
 
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
@@ -641,9 +642,11 @@ Back to Quicksort.
 \end{pro}
 
 
-\section{Monte Carlo methods}
 
-\subsection{Example 1}
+\chapter{Monte Carlo methods}
+
+
+\section{Example 1}
 
 % skica
 Area of circle $= \frac{\pi}{4}$. \\
@@ -655,6 +658,183 @@ $P_r(X_i = 1) = \frac{\frac{\pi}{2}}{1} = \frac{\pi}{4}$. \\
 $E(X_i) = \frac{\pi}{4}$. \\
 $X = \frac{\sum_{i=1}^{n} X_i}{n}$. \\
 $E(X) = \frac{n \cdot E(X_i)}{n} = E(X_i)$.
+
+
+% 4. predavanje: 27.10.
+
+\section{Example 2}
+
+$I = \int_{\Omega} f(x) dx$ - volume. \\
+% skica
+$X_i = \begin{cases}
+  1 \; F(x_i,y_i) \leq z_i \\
+  0 \text{ otherwise}
+\end{cases}$ \\
+$v \cdot E\left(\frac{\sum_{i=1}^{n} X_i}{n}\right) = I$.
+
+
+\section{$(\epsilon,\delta)$-approximation}
+
+\begin{defn}[$(\epsilon,\delta)$-approximation]
+  A random algorithm gives a $(\epsilon,\delta)$-approximation for value $v$ if the output $X$ satisfies:
+  \begin{equation*}
+    P_r(|X-v| \leq \epsilon v) \geq 1 - \delta.
+  \end{equation*}
+\end{defn}
+\begin{theorem}
+  Let $X_1 \dots X_n$ be independent and identically distributed indicator variables.
+  Let $\mu = E(X_i), \; Y = \frac{\sum_{i=1}^{m} X_i}{m}$.
+  If $m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2 \mu}$, then $P_r(|Y-\mu| \geq \epsilon \mu) \leq \delta$
+  $\implies Y$ is $(\epsilon,\delta)$-approximation for $\mu$.
+\end{theorem}
+\begin{pro} \text{} \\
+  $X = \sum_{i=1}^{n} X_i$ \\
+  $E(X) = m E(x_i) = m \mu$ \\
+  $m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2 \mu}$
+  \begin{align*}
+    P_r(|Y-\mu| \geq \epsilon \mu) &= P_r(\left|\frac{X}{m}-\mu\right| \geq \epsilon \mu) \\
+    &= P_r(\frac{1}{m} \left|X-E(X)\right| \geq \frac{1}{m} \epsilon E(x)) \\
+    &\stackrel{\text{Chernoff}}{\leq} 2 e^{-\frac{\epsilon^2 E(x)}{3}} \\
+    &= 2 e^{-\frac{\epsilon^2 \mu m}{3}} \\
+    &\leq 2 e^{-\frac{\epsilon^2 \mu}{3} \cdot \frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2 \mu}} = \delta.
+  \end{align*}
+\end{pro}
+Back to example 1: \\
+$E(Y) = \frac{\pi}{4}, \delta = \frac{1}{1000}$ ($99.9\%$ sure), $\epsilon = \frac{1}{10000}$ \\
+$\implies M = \frac{3 \ln\left(\frac{2}{\frac{1}{1000}}\right) 4}{\pi \left(\frac{1}{10000}\right)^2} \approx 29106$. \\
+Problems for MC (Monte-Carlo):
+\begin{itemize}
+  \item rare events, e.g. $X \sim \begin{pmatrix}0 & 10^{100} \\ 1-10^{-20} & 10^{-20}\end{pmatrix}, \; E(X) = 10^{80}$
+    % skica
+\end{itemize}
+
+
+\section{DNF counting}
+
+CNF: $(X_{i_1} \lor \overline{X_{i_2}} \lor X_{i_4}) \land (X_{i_1} \lor \overline{X_{i_3}}) \land \dots$ \\
+DNF: $(\overline{X_{i_1}} \land X_{i_2} \lor \overline{X_{i_4}}) \lor \dots$
+- easy to determine if solution exists. \\
+Question: number of solutions to a given DNF? \\
+Observation: CNF $F$ has a solution $\iff$ DNF $\neg F$ has less than $2^n$ solutions, $n$ is number of samples.
+\begin{alltt}
+  ALG_1(F):
+    x = 0
+    for i in range(1,m+1):
+      \(x_1 \dots x_n\) uniformly random from \{0,1\}\(\sp{n}\)
+      if \(F(x_1 \dots x_n)\) = 1:
+        x += 1
+    return \(\frac{x}{m} \cdot 2\sp{n}\)
+\end{alltt}
+$Y = \frac{\sum_{i=1}^{m} X_i}{m}$ \\
+$(\epsilon,\delta)$-approximation for $Y$ \\
+$E(Y) = \frac{\text{number of solutions of }F}{2^n} = \frac{c(F)}{2^n}$ \\
+$m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2 E(X)} =
+\frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2} \cdot \frac{2^n}{x(F)}$ \\
+$c(F)$ very small $\to$ $m$ exponentially big $\to$ not good (we need a lot of samples).
+\begin{defn} \text{} \\
+  $SC_i = \{(a_1 \dots a_n) \in \{0,1\}^n \text{ such that } F = F_1 \lor \dots \lor F_t, \; F_i(a_1 \dots a_n) = 1\}$.
+  % skica
+\end{defn}
+$|SC_i| = 2^{n-l_i}$, $l_i$: number of values in $F_i$ \\
+$U = \{(i,a) \mid i \in \{1,2 \dots t\}, a \in SC_i\}$ \\
+$U = \sum_{i=1}^{t} |SC_i|$ - $O(tn)$ (space smaller than $\{0,1\}^n$) \\
+$S = \{(i,a) \in U \mid a \in SC_i, \; a \not \in SC_j \; 1 \leq j < i\}$ \\
+$|S| = |SC_1| + \dots + |SC_t| = c(F)$.
+\begin{alltt}
+  ALG_2(F):
+    x = 0
+    for i in range(1,m+1):
+      (i, a) uniformly random from U (**)
+      if (i, a) \(\in\) S: (*)
+        x += 1
+    return \(\frac{x}{m} \cdot |U|\)
+\end{alltt}
+$(*) \; a \in SC_i \to O(n), \; a \notin SC_j \; j = 1 \dots i-1 \to O(tn) \; \implies \; O(tn), m$ times. \\
+$(**)$: watch for details on how to, e.g. $x_2, x_2 \land x_3$: $x_2$ is more probable than $x_2 \land x_3 \to O(1)$.
+\begin{theorem}
+  For $m = \lceil\frac{3t \ln(\left(\frac{2}{\delta}\right))}{\epsilon^2}\rceil$ algorithm returns $(\epsilon,\delta)$-approximation
+  in $O\left(\frac{t^n n \ln\left(\frac{2}{\delta}\right)}{\epsilon^2}\right)$ time.
+\end{theorem} 
+\begin{pro}
+  $O(t \cdot n \cdot m)$. \\
+  Insert $m = ...$
+\end{pro}
+Prove
+\begin{equation*}
+  P_r(Y|U| - c(F) > \epsilon c(F)) < \delta:
+\end{equation*}
+$c(F) = |S|, E(Y) = \frac{|S|}{|U|}$
+\begin{align*}
+  P_r(Y|U| - c(F) > \epsilon c(F)) &= P_r(|U|(Y - E(Y)) > \epsilon |U| E(Y)) \leq \delta
+\end{align*}
+if
+\begin{equation*}
+  m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2 E(Y)} \geq \frac{3 \ln\left(\frac{2}{\delta}\right)t}{\epsilon^2}
+\end{equation*}
+where
+\begin{equation*}
+  E(Y) = \frac{|S|}{|U|} \geq \frac{1}{t}
+\end{equation*}
+($=$ if disjoint). \\
+In new space $E(Y)$ much larger $\implies$ $m$ smaller.
+% skica
+
+
+
+\chapter{Polynomials}
+
+
+Let $\F$ be a field. \\
+$\F$ can be $\R, \C, \Z_p, \F_{p^n}$. \\
+$\F[x_1 \dots x_n]$ algebra of polynomials with values $x_1 \dots x_n$. \\
+$f \in \F[x_1 \dots x_n]$ \\
+$deg(f[x_1 \dots x_n]) := deg(f[x \dots x])$.
+\begin{theorem}
+  Let $p(x_1 \dots x_n) \in \F[x_1 \dots x_n]$ have the degree $d \geq 0$ and $p \neq 0$.
+  Let $s \subset \F$ be finite.
+  If $(r_1 \dots r_n)$ is uniformly at random element from $S^n$.
+  Then $P_r(p(r_1 \dots r_n) = 0) \leq \frac{d}{|S|}$.
+\end{theorem}
+\begin{pro}
+  Induction on $n$. \\
+  $n=1$:
+  \begin{align*}
+    &p(x) = (x-z_1) (x-z_2) \dots (x-z_j) q(z) \\
+    &\text{number of zeros } \leq \text{ degree - fact} \\
+    &P_r(p(r_1) = 0) = \frac{\text{number of zeros}}{|S|} \leq \frac{d}{|S|}.
+  \end{align*}
+  $n-1 \to n$:
+  \begin{align*}
+    &\text{rewrite }p: \\
+    &p(x_1 \dots x_n) = \sum_{i=0}^{j} x^i p_i(x_2 \dots x_n) \\
+    &j \leq d \\
+    P_r(p(r_1 \dots r_n) = 0) &= P_r(p(r_1 \dots r_n = 0) \mid p_j(r_2 \dots r_n) = 0) \cdot P_r(p_j(r_2 \dots r_n) = 0) \\
+    &+ P_r(p(r_1 \dots r_n = 0) \mid p_j(r_2 \dots r_n) \neq 0) \cdot P_r(p_j(r_2 \dots r_n) \neq 0) \\
+    &\leq 1 \cdot \frac{d-j}{|S|} + \frac{j}{|S|} \cdot 1, \\
+  \end{align*}
+  because
+  \begin{align*}
+    &P_r(p(r_1 \dots r_n = 0) \mid p_j(r_2 \dots r_n) \neq 0) \leq \frac{d-j}{|S|} \\
+    &P_r(p_j(r_2 \dots r_n) \neq 0) \leq \frac{j}{|S|}.
+  \end{align*}
+\end{pro}
+\underline{Problem}: \\
+Let $A,B,C \in \F^{n \times n}$, is $A \cdot B = C$? \\
+Computing $A \cdot B$:
+\begin{itemize}
+  \item school-book algorithm: $O\left(n^3\right)$,
+  \item Strassen algorithm: $O\left(n^{2,807\dots}\right)$,
+  \item galactic algorithm: $O\left(n^{2.372\dots}\right)$ - has enormous constants.
+\end{itemize}
+\begin{alltt}
+  RAND_ACB(A,B,C):
+    for i in range(1,k+1):
+      x uniformly at random from \{0,1\}\(\sp{n}\)
+      if \(A \cdot (B \cdot x) \neq x\):
+        return false
+    return true
+\end{alltt}
+$O\left(k n^2\right)$.
 
 
 %\clearpage
