@@ -834,7 +834,140 @@ Computing $A \cdot B$:
         return false
     return true
 \end{alltt}
-$O\left(k n^2\right)$.
+$O\left(k n^2\right)$. \\
+
+
+% 5. predavanje: 3.11.
+
+If $A \cdot B = C$, algorithm returns true. \\
+If $A \cdot B \neq C$: \\
+\begin{align*}
+  P_r(ABx = Cx) &= P_r((AB-C)x = 0) \\
+  &= P_r(||(AB-C)x||^2 = 0) \stackrel{\text{Poly}}{\leq} \frac{2}{3}.
+\end{align*}
+$||(AB_C)x||^2$ - polynomial in $x_1 \dots x_n$ of degree $2$. \\
+If $A \cdot B \neq C$, then algorithm return false with probability at least $1 - \left(\frac{2}{3}\right)^k$. \\
+\underline{Problem}: \\
+1-factor in bipartite graphs. \\
+% skica
+$|V(g)| = 2n$. \\
+Represent $G$ with $n \times n$ matrix $Z = (Z_{ij})_{i,j=1}^n$ \\
+$Z_{ij} = \begin{cases}
+  &X_{ij} \text{ if } a_i b_j \in E(x) \qquad \text{(X: variable)} \\
+  &0 \text{ else}
+\end{cases}$ \\
+\begin{align*}
+  det Z(x_{11} \dots x_{nn}) &= \sum_{\pi \in S_n} sign(\pi) z_{1,\pi(1)} \dots z_{n,\pi(n)} \\
+  &= \sum_{\pi \in S_n, \pi \text{ defines 1-factor}} sign(\pi) x_{1,\pi(1)} \dots x_{n,\pi(n)}.
+\end{align*}
+$det Z \neq 0 \iff G$ has 1-factor. \\
+\begin{alltt}
+  Rand_1factor(G):
+    construct Z with variables x11 ... xnn
+    for i in range(1,k+1):
+      u <- uniformly at random from  {1,2..2n-1}\(\sp{n\sp{2}}\) (r11 ... rnn)
+      compuze d = det Z(r11 ... rnn)
+      if d != 0:
+        return true
+    return false
+\end{alltt}
+Complexity: $k \cdot$ computing determinant: $O\left(n^3\right)$ (Gaussian elimination). \\
+or apply approximation algorithm:
+\begin{itemize}
+  \item if $G$ has no 1-factor it always returns false,
+  \item if $G$ has 1-factor, it returns true with probability at least $1-\left(\frac{n}{2n}\right)^k = 1 - \left(\frac{1}{2}\right)^k$
+    ($k$ konstant, larger set $\implies$ smaller $k$ needed).
+\end{itemize}
+
+
+
+\chapter{Random graphs}
+
+
+\section{G(n,p) model}
+
+$G$ is a random Erdös-Rény graph if it has $n$ vertices and each pair of vertices is connected with probability $p$.
+\begin{ex}
+  $G\left(5, \frac{1}{2}\right)$.
+  % skica
+\end{ex}
+$E($ edges in $G$ fron $G(n,p)) = \sum_{1 \leq i < j \leq n} E(X_{ij}) = \binom{n}{2} p$. \\
+$X_{ij} = \begin{cases}
+  1 \text{ if } i \text{ and } j \text{ have edge} \\
+  0 \text{ otherwise}
+\end{cases}$ \\
+$p$ can be function of $n$. \\
+$Y_v:$ degree of $v$. \\
+$E(Y_v) = (n-1)p$.
+\begin{defn} \text{} \\
+  We say that a random graph has some property almost surely (A.S.) if
+  $P_r(G \in G(n,p) \text{ has property}) \stackrel{n \to \infty}{\to} 1$.
+\end{defn}
+\begin{claim} \text{} \\
+  Let $p$ be constant.
+  Then $G \in G(n,p)$ has diameter 2 A.S.
+\end{claim}
+\begin{pro} \text{} \\
+  Let $u,v \in V(G)$ \\
+  % skica
+  $X_w = \begin{cases}
+    1 \text{ if } uw \in E(G) \text{ in } vw \in E(G)
+  \end{cases}$ \\
+  $P_r(X_w = 1) = p^2$ \\
+  $P_r(X_w = 0 \text{ for all } w \neq u,v) = \left(1-p^2\right)^{n-2}$. \\
+  $P_r(G \text{ has diameter} > 2)$ \\
+  $= P_r(X_w = 0$ for all $w \notin u,v $ for some $u,v)$ \\
+  $\leq \binom{n}{2} (1-p^2)^{n-2} \stackrel{n \to \infty}{\to} 0$; \\
+  $\binom{n}{2}$ - polynomial, $e^{...}$ - exponent.
+\end{pro}
+$p = f(n)$ \\
+$\frac{1}{n}, \frac{1}{n^3}, \frac{\log n}{n}$
+\begin{theorem} (without proof) \\
+  Let $p$ be a function of $n$: let $G \in G(n,p)$:
+  \begin{itemize}
+    \item $np < 1$ - $G$ A.S. disconnected with connected components of size $O(\log n)$
+    \item $np = 1$ - $G$ A.S. has $1$ large component of size $O\left(n^{\frac{2}{3}}\right)$
+    \item $np = c > 1$ - $G$ A.S. has giant component of size $dn, \; d \in (0,1)$
+    \item $np \leq (1-\epsilon) \ln n$ - $G$ A.S. disconnected with isolated vertices
+    \item $np > (1-\epsilon) \ln n$ - $G$ A.S. connected.
+  \end{itemize}
+\end{theorem}
+\begin{theorem} \text{} \\
+  Let $np = \omega(n) \ln(n)$ for $\omega(n) \to \infty$ \sn{very slowly} think of $\omega(n) = \log (\log n)$,
+  then $diam(G)$ in $\Theta\left(\frac{\ln n}{\ln (np)}\right)$ for $G$ in $G(n,p)$.
+\end{theorem}
+\begin{lemma} \text{} \\
+  Let $S \subset V(G), |S| = cn$ for $c \in (0,1]$ and $v \notin S$. \\
+  % skica
+  then $cnp(1-\omega^{-\frac{1}{3}}) \leq N_S(v) \leq cnp(1+\omega^{-\frac{1}{3}})$ A.S.
+  ($\omega^{-\frac{1}{3}} \to 0$ very slowly).
+\end{lemma}
+\begin{pro}(Lemma): \\
+  $E(N_s(v)) = c \cdot n \cdot p, \delta = \omega^{-\frac{1}{3}}$ \\
+  \begin{align*}
+    P_r(|N_s(v) - cnp| \geq \delta cnp) &\stackrel{\text{Chernoff}}{\leq} 2 e^{-\frac{\omega^{-\frac{2}{3}} cnp}{3}} \\
+    &= 2 e^{-\frac{cnp}{3 \omega(n)^{\frac{2}{3}}}} \stackrel{n \to \infty}{\to} 0.
+  \end{align*}
+  For all $v$: $n \cdot 2 e^{-\frac{cnp}{3 \omega(n)^{\frac{2}{3}}}} \stackrel{n \to \infty}{\to} 0$.
+\end{pro}
+\begin{pro}(Theorem): \\
+  % skica
+  $k$ be such that $\sum_{i=0}^{k-1} |N_i| \leq \frac{n}{2}, \sum_{i=0}^{k} |N_i| > \frac{n}{2}$. \\
+  $|N_0| = 1$ \\
+  $|N_i| \leq |N_{i-1}| \cdot n \cdot p \cdot (1+\omega^{-\frac{1}{3}})$: \\
+  $|S| \leq n, \; np(1+\omega^{-\frac{1}{3}})$-each element. \\
+  $k = \frac{\log \left(\frac{n}{3}\right)}{\log \left(n \cdot p \cdot \left(1+\omega^{-\frac{1}{3}}\right)\right)} \\
+  = \log_{np(1+\omega^{-\frac{1}{3}})} \frac{n}{3} = \Theta\left(\frac{\ln(n)}{\ln(np)}\right)$. \\
+  $|N_{\leq k}| = |N_1 \cup \dots \cup N_k|$.
+  \begin{align*}
+    |N_{\leq k}| &\leq \sum_{i=0}^{k} (np(1+\omega^{-\frac{1}{3}}))^i \\
+    &= \frac{(np(1+\omega^{-\frac{1}{3}}))^{k+1}-1}{np(1+\omega^{-\frac{1}{3}}) - 1} \\
+    &< \frac{np(1+\omega^{-\frac{1}{3}})^{k+1}}{\frac{1}{2} np(1+\omega^{-\frac{1}{3}})} \\
+    &= 2 np(1+\omega^{-\frac{1}{3}})^k \\
+    &\stackrel{k}{=} 2 \cdot \frac{n}{3} \text{ haven't covered all} \\
+    &\implies diam(G) > k \text{ bound from below}.
+  \end{align*}
+\end{pro}
 
 
 %\clearpage
