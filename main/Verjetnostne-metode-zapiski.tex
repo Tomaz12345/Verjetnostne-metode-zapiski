@@ -967,7 +967,153 @@ $\frac{1}{n}, \frac{1}{n^3}, \frac{\log n}{n}$
     &\stackrel{k}{=} 2 \cdot \frac{n}{3} \text{ haven't covered all} \\
     &\implies diam(G) > k \text{ bound from below}.
   \end{align*}
+
+
+% 6. predavanje: 10.11.
+
+  % skica
+  $N_i \subseteq S$ \\
+  $\frac{1}{2} n p \left(1-\omega^{-\frac{1}{3}}\right) \cdot |N_{i-1}| \leq |N_i|$ \\
+  \begin{align*}
+    n & \geq \sum_{i=0}^{k} |N_i| \\
+    & \geq \sum_{i=0}^{k} \left(\frac{1}{2} n p \left(1-\omega^{-\frac{1}{3}}\right)\right)^i \\
+    &= \frac{\left(\frac{1}{2} n p \left(1-\omega^{-\frac{1}{3}}\right)\right)^{k+1} - 1}
+      {\frac{1}{2} n p \left(1-\omega^{-\frac{1}{3}}\right) - 1} \\
+    &\geq \left(\frac{1}{2} n p \left(1-\omega^{-\frac{1}{3}}\right)\right)^k \qquad / \ln
+  \end{align*}
+  $\frac{\ln n}{\ln (np)} \approx \frac{\ln n}{\ln \left(\frac{1}{2} n p \left(1-\omega^{-\frac{1}{3}}\right)\right)} \geq k$. \\
+  $\implies w \in S^{'}$. \\
+  Number of neighbors in $N_k$ A.S. $\geq 1$, \\
+  $|N_k| \geq \left(\frac{1}{2} n p \left(1-\omega^{-\frac{1}{3}}\right)\right)^k \approx c \cdot n$ \\
+  $\implies diam (G) = k + 1 $ A.S.
 \end{pro}
+
+\subsection{Scale free property}
+
+$G \in G(n,p)$. \\
+% skica
+In real world:
+% skica, skica
+$p(k) = $ proportion of degree $k$ vertices. \\
+$\log(p(k)) = -\gamma \cdot \log k$ \\
+$p(k) = k^{-\gamma}$. \\
+Internet: $\gamma \approx 3.42$, \\
+protein reactions: $\gamma \approx 2.89$.
+
+
+\section{Barbási-Albert Model}
+
+B.A. model. \\
+Start with $m$ modes. \\
+Grow:
+\begin{itemize}
+  \item add node $v$,
+  \item add $m$ edges from $v$ (to $u$),
+  \item for each new edge: $P(v \sim u) = \frac{deg u}{\sum_x deg x}$.
+\end{itemize}
+\begin{theorem} \text{} \\
+  B.A. model has scale free property, in particular \\
+  $p_k = \frac{2 m (m+1)}{k (k+1) (k+2)}$.
+\end{theorem}
+\begin{defn} \text{} \\
+  $p_n(k)$: expected proportion of degree $k$ vertices in graph with $k$ vertices, \\
+  $p_k := \lim_{n \to \infty} p_n(k)$.
+\end{defn}
+\begin{pro} \text{} \\
+  $p_n(k) \cdot n$: expected number of degree $k$ vertices, \\
+  $p_n(k) n \cdot \frac{k}{\sum_u deg u} m = p_n(k) \cdot \frac{k}{2}$:
+    expected number of degree $k$ vertices changing into degree $k+1$ vertices. \\
+  $\sum_u deg u = 2 |E|$ \\
+  $p_{n+1}(k) \cdot (n+1) = p_n(k) \cdot n - p_n(k) \cdot \frac{k}{2} + p_n(k-1) \cdot \frac{k-1}{2}$, where \\
+  $p_n(k) \cdot n$: degree $k \to k$, \\
+  $p_n(k) \cdot \frac{k}{2}: k \to k+1$, \\
+  $p_n(k-1) \cdot \frac{k-1}{2}: k-1 \to k$. \\
+  For $n$ very big (very close to limit): \\
+  $p_n \cdot (n+1) = p_k \cdot n - p_{k-1} \cdot \frac{k}{2} + p_{k-1} \cdot \frac{k-1}{2}$ \\
+  $\implies p_k = \frac{k-1}{k+2} p_{k-1}$. \\
+  For degree $m$: \\
+  $(n+1) \cdot p_{n+1}(m) = p_n(m) \cdot n - p_n(m) \cdot \frac{m}{2} + 1$ %??
+  \begin{align*}
+    &p_m = \frac{2}{m+2} \\
+    \implies &p_{m+1} = \frac{2}{m+2} \cdot \frac{m}{m+3} \\
+    \implies &p_{m+2} = \frac{2m(m+1)}{(m+2)(m+3)} \\
+    \implies &p_k = \frac{2m(m+1)}{k(k+1)(k+2)}.
+  \end{align*}
+\end{pro}
+
+
+
+\chapter{Markov chains}
+
+
+$\Omega$: finite set (of states).
+\begin{defn}[Markov chain] \text{} \\
+  (Discrete time) Markov chain is a sequence of random variables $X = X_0, X_1, X_2 \dots$ with image $\Omega$ and properties:
+  \begin{itemize}
+    \item $P(X_{i+1} = x \mid X_i = x_i, X_{i-1} = x_{i-1} \dots X_0 = x_0) =\\ P(X_{i+1} = x \mid X_i = x_i)$,
+    \item $P{X_{i+1} = x \mid X_i = y} = P(X_1 = x \mid X_0 = y)$ - time is homogenous.
+  \end{itemize}
+\end{defn}
+\begin{ex} \text{} \\
+  $\Omega = \Z_5$ \\
+  $P(X_{i+1} = x+1 \mid X_i = x) = \frac{1}{2}$ \\
+  $P(X_{i+1} = x-1 \mid X_i = x) = \frac{1}{2}$. \\
+  % skica
+\end{ex}
+\begin{defn}[Transition matrix] \text{} \\
+  $\Omega = \{x_1 \dots x_n\}$ \\
+  $p_{ij} = P(X_{t+1} = j \mid X_t = i)$ \\
+  $\begin{bmatrix}
+    p_{11} & \dots \\ p_{1n} \\
+    \vdots & & \vdots \\
+    p_{n1} & \dots & p_{nn}
+  \end{bmatrix}$.
+\end{defn}
+\begin{defn}[Transition graph] \text{} \\ 
+  Edge between states $i$ and $j$ exists if $p_{ij} > 0$.
+  % skica
+\end{defn}
+$P$ is stochastic matrix: \\
+$p_{ij} \in [0,1]$ \\
+$\sum_j p_{ij} = 1$. \\
+We choose beginning state randomly. \\
+$q(0) = (q_1(0) \dots q_n(0))$ \\
+$P(X_0 = i) = q_i(0)$. \\
+Let $q(t) = (q_1(t) \dots q_n(t))$ \\
+$P(X_t = i) = q_i(t)$. \\
+It holds: $q(t) = q(t-1) \cdot P = q(0) \cdot P^t$. \\
+$\begin{bmatrix}
+  0 & \frac{1}{2} & 0 & 0 & \frac{1}{2} \\
+  \frac{1}{2} & 0 & \frac{1}{2} & 0 & 0 \\
+  0 & \frac{1}{2} & 0 & \frac{1}{2} & 0 \\
+  0 & 0 & \frac{1}{2} & 0 & \frac{1}{2} \\
+  \frac{1}{2} & 0 & 0 & 0 & \frac{1}{2}
+\end{bmatrix}$ \\
+$q(0) = (1, 0, 0, 0, 0)$ \\
+$q(1) = (1, \frac{1}{2}, 0, 0, \frac{1}{2})$ \\
+$q(2) = (\frac{1}{2}, 0, \frac{1}{4}, \frac{1}{4}, 0)$ \\
+$\vdots$ \\
+% skica
+\begin{defn} \text{} \\
+  \begin{itemize}
+    \item Distribution $\pi$ is stationary if $\pi = \pi \cdot P$,
+    \item $f_{ij}$: probability that $X_t = x_j$ for some $t$ assuming $X_0 = x_i$,
+      % skica
+    \item $h_{ij}$: expected number of steps needed to get to state $X_j$ strting in $X_i$ (hitting time),
+    \item $N(i, t, q(0))$: expected number of times we visit $x_i$ after $t$ steps starting with distribution $q(0)$,
+    \item $\forall f_{ij} > 0 \; \iff$ transition graph is strongly connected $\iff$ we say the chain is irreducible,
+    \item M.C. is aperiodic if there is no $c \in \{2, 3, 4 \dots\}$ such that all lengths of cycled are divisible by $c$.
+  \end{itemize}
+\end{defn}
+\begin{theorem} \text{} \\
+  Let $X$ be finite irreducible M.C. Then:
+  \begin{enumerate}[label=\alph*)]
+    \item there exists unique stationary distribution $\pi = (\pi_1 \dots \pi_n)$,
+    \item $f_{ii} = 1, h_{ii} = \frac{1}{\pi_i}$,
+    \item $\lim_{t \to \infty} \frac{N(i, t, q(0))}{t} = \pi_i$ - approaches $\pi$ regardless of $q(0)$,
+    \item if $X$ is aperiodic: $\lim_{t \to \infty} q(0) \cdot P^t = \pi$. 
+  \end{enumerate}
+\end{theorem}
 
 
 %\clearpage
