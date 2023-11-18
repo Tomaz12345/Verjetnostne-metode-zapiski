@@ -1116,6 +1116,161 @@ $\vdots$ \\
 \end{theorem}
 
 
+% 7. predavanje: 17.11.
+
+\begin{ex} \text{} \\
+  % skica
+  $P = \begin{bmatrix}
+    0 & \frac{1}{2} & \dots & \frac{1}{2} \\
+    \frac{1}{2} & 0 & \dots & 0 \\
+    \vdots & & & \vdots \\
+    \dots & & \frac{1}{2} & 0
+  \end{bmatrix}$ \\
+  $\pi = (\frac{1}{n} \dots \frac{1}{n})$ \\
+  $h_{i,i} = n$ \\
+  $n = h_{i,i} = 1 + \frac{1}{2} h_{i-1,i} + \frac{1}{2} h_{i+1,i}, \quad h_{i-1,i} = h_{i+1,i}$ \\
+  $n-1 = h_{i-1,i}$ \\
+  $E(\text{steps around}) \leq h_{0,1} + h_{1,2} + \dots + h_{n-1,n} \leq n(n-1)$.
+\end{ex}
+
+
+\section{2-SAT}
+
+Recall: k-SAT:
+\begin{align*}
+  &F = C_1 \land \dots \land C_m \\
+  &C_i = X_{i1} \lor \dots \lor X_{ik}.
+\end{align*}
+3-SAT: NP complete. \\
+\begin{alltt}
+  Algorithm:
+    def rand2SAT(F):
+      \(b\sp{0}\) = \((b_0\sp{0} \dots b_n\sp{0})\)
+      for i in range(t):
+        if F(\(b\sp{i}\)) = 1:
+          return True
+        Cl <- clause trat is False
+        xj <- uniformly at random from xl1 and xl2
+        \(b\sp{i+1}\) = (\(b_0\sp{i} \dots not b_j\sp{i} \dots b_n\sp{i}\))
+      if F(\(X\sp{t}\)) = 1:
+        return True
+      return False
+\end{alltt}
+\begin{theorem} \text{} \\
+  If $k = 8n^2$, then $P(\text{rand2SAT = True} \mid \text{correct answer is True}) \geq \frac{3}{4}$.
+\end{theorem}
+\begin{pro} \text{}
+  Let $a = (a_1 \dots a_n)$ be a correct solution. \\
+  Let $X_i =$ Hamming distance from $b^i$ to $a$. \\
+  % skica(i)
+  Goal: bount $h_{n,0}$. \\
+  $P(\text{distance of } b^{i+1} \text{ to $a$ is } j-1 \mid \text{distance of $b^i$ to $a$ is } j) \geq \frac{1}{2}$. \\
+  $P = \begin{bmatrix}
+    0 & 1 & \dots & 0 \\
+    \frac{1}{2} & 0 & \dots & 0 \\
+    \vdots & & & \vdots \\
+    \dots & & 1 & 0
+  \end{bmatrix}$ \\
+  $\pi \stackrel{?}{=} \pi P$ \\
+  $\pi = (\frac{1}{2n}, \frac{1}{n} \dots \frac{1}{n}, \frac{1}{2n})$ \\
+  By theorem \\
+  $h_{i,i} = \frac{1}{\pi_i} = n$ for $i = 1, 2 \dots n-1$ \\
+  $h_{0,0} = h_{n,n} = 2n$ \\
+  $n = h_{i,i} = 1 + \frac{1}{2} h_{i+1,i} + \frac{1}{2} h_{i-1,i}$ \\
+  $h_{i+1,i} \leq 2n$ \\
+  $i = 0: \; 2n = h_{0,0} = 1 + h_{1,0} \implies h_{1,0} < 2n$ \\
+  $h_{n,0} \leq h_{n,n-1} + \dots + h_{1,0} \leq 2n^2$ \\
+  $E(\text{steps in algorithm to reach corrce solution}) = E(Z) \leq 2n^2$ \\
+  $P(\text{algorithm hasn't reached correct solution after $8n^2$ steps}) \\
+  = P(Z > 8n^2) \stackrel{\text{Markov}}{\leq} \frac{E(Z)}{8n^2} \leq \frac{1}{4}$.
+\end{pro}
+
+
+\section{Generating a uniformly random element of a set}
+
+$\Omega$: set. \\
+Let $G$ be a symmetric graph on $\Omega$. \\
+We form M.C: \\
+$P_{x,y} = \begin{cases}
+  \frac{1}{M} \text{ if } x \neq y \land x \sim y \\
+  0 \text{ if } x \neq y \land x \nsim y \\
+  1 - \frac{|N(x)|}{M} \text{ if } x = y
+\end{cases}$ \\
+$M \geq \max_{v \in \Omega} |N(v)|$. \\
+If $G$ is connected $\implies$ M.C. is irrecudible. \\
+$\pi = (\frac{1}{|\Omega|} \dots \frac{1}{|\Omega|})$ \\
+$\pi \stackrel{?}{=} \pi P$ \\
+\begin{align*}
+  (\pi P)_x &= \sum_y \pi_y P_{y,x} \\
+  &= \sum_{y \in N(x)} \frac{1}{M} \cdot \frac{1}{|\Omega|} + \frac{1}{|\Omega|}
+    \left(1 - \frac{|N(x)|}{M}\right) = \frac{1}{|\Omega|} = \pi_x.
+\end{align*}
+$\implies$ if we walk on the Markov chain long enough, we end up in state $x$ with probability $\pi_x = \frac{1}{|\Omega|}$ \\
+$\implies$ we can sample uniformly.
+\begin{ex} \text{} \\
+  $G$ graph, finding largest independent set $(\forall u,v: u \nsim v)$ is NP-complete. \\
+  Lets try sampling a uniformly random independent set \\
+  $\Omega = \{\text{independent sets}\}$ \\
+  $u \sim v$ if $|u \triangle v| = 1$ $((u \cup \{el\}) = v)$ \\
+  M.C.: $X_0$ = arbitrary independent set \\
+  $X_{i+1}$:
+  \begin{itemize}
+    \item pick uniformly at random $v \in V(G)$,
+    \item if $v \in U$ then $X_{i+1} = U \textbackslash \{v\}$,
+    \item if $U \cup \{v\}$ is independent then $X_{i+1} = U \cup \{v\}$,
+    \item else $X_{i+1} = U$.
+  \end{itemize}
+  $M$ is number of vertices \\
+  $\implies \; \forall u \in \Omega: \lim_{t \to \infty} P(X_t = u) = \frac{1}{|\Omega|}$. \\
+  Note: irredudicle; $U \to \emptyset \to V$, aperiodic.
+\end{ex}
+
+
+\section{Metropolis algorithm}
+
+$\Omega$: set, \\
+$\pi$: chosen distribution on $\Omega$. \\
+Make $G$ graph on $\Omega$ \\
+$P_{x,y} = \begin{cases}
+  \frac{1}{M} \cdot \min \left(1, \frac{\pi_y}{\pi_x}\right) \text{ if } x \neq y \land x \sim y \\
+  0 \text{ if } x \neq y \land x \nsim y \\
+  1 - \sum_{y \in N(x)} \text{ if } x = y
+\end{cases}$ \\
+$M \geq \max_{v \in \Omega} |N(v)|$ \\
+$\pi \stackrel{?}{=} \pi P$ \\
+\begin{align*}
+  (\pi P)_x &= \sum_y \pi_y P_{y,x} =
+    \sum_{y \in N(x)} \pi_y \frac{1}{M} \min \left(\left(1, \frac{\pi_y}{\pi_x}\right)\right)
+    + \pi_x \left(1 - \sum_{y \in N(x)} \frac{1}{M} \min \left(1, \frac{\pi_y}{\pi_x}\right)\right) \\
+  &= \sum_{y \in N(x), \pi_y \geq \pi_x} \pi_y \frac{1}{M} \cdot 1 +
+    \sum_{y \in N(x), \pi_y < \pi_x} \pi_y \frac{1}{M} \frac{\pi_y}{\pi_x} + \pi_x \\
+  &- \sum_{y \in N(x), \pi_y \geq \pi_x} \pi_x \frac{1}{M} \frac{\pi_y}{\pi_x} -
+    \sum_{y \in N(x), \pi_y < \pi_x} \frac{1}{M} \cdot 1 \\
+  &= \pi_x.
+\end{align*}
+\begin{ex} \text{} \\
+  $\Omega = \Z \cap [-1000,1000]$ \\
+  $\pi \sim e^{-\frac{(x-\mu)^2}{2 \delta}}$ \\
+  % skica
+  \begin{alltt}
+    \(X\sb{0}\) arbitrary
+    for i = in range(1,m):
+      y <- uniformly from {\(X\sb{i}\)+1,\(X\sb{i}\)-1}
+      M <- uniformly from [0,1]
+      if \(M \leq \frac{\pi(y)}{\pi(x)}\):
+        \(X\sb{i+1}\) = y
+      else:
+        \(X\sb{i+1}\) = \(X\sb{i}\)
+    return \(X\sb{m}\)
+  \end{alltt}
+\end{ex}
+\begin{ex} \text{} \\
+  Find maximum of a positive function $f$. \\
+  Use metropolis algorithm to sample proportional to $f$. \\
+  Note: all I need to know is ratios $\frac{f(y)}{f(x)}$.
+\end{ex}
+
+
 %\clearpage
 %\phantomsection
 
