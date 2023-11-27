@@ -1271,6 +1271,169 @@ $\pi \stackrel{?}{=} \pi P$ \\
 \end{ex}
 
 
+% 8. predavanje: 24.11.
+
+Back to independent sets. \\
+$G = (V, E)$ \\
+$\Omega$ = independent sets. \\
+$\lambda \in (1, \infty)$ \\
+$\pi(u) \sim \lambda^{|u|}$ \\
+$\pi(u) = \frac{\lambda^{|u|}}{\sum_{v \text{ independent set}} \lambda^{|v|}}$. \\
+How to calculate the sum? \\
+No problem: only need proportions. \\
+$X_0$: arbitrary independent set. \\
+$X_i \to X_{i+1}$:
+\begin{itemize}
+  \item we pick $v \in V$ uniformly at random,
+  \item if $v \in X_i \implies$
+    \begin{itemize}
+      \item $X_{i+1} = X_i \setminus \{v\}$ qith probability $\frac{1}{\lambda} = \min \{1, \frac{\pi_y}{\pi_x}\}$,
+      \item $X_{i+1} = X_i$ with probability $1 - \frac{1}{\lambda}$,
+    \end{itemize}
+  \item if $v \in X_j$ and $X_i \cup \{v\}$ is independent $\implies \; X_{i+1} = X_i \cup \{v\}$,
+  \item otherwise $X_{i+1} = X_i$.
+\end{itemize}
+\begin{ex} \text{}
+  Bayes: $P(A \mid B) = \frac{P(A \cap B)}{P(B)} = \frac{P(B \mid A) P(A)}{P(B)}$. \\
+  $B \leftarrow$ machine is giving values, e.g. $y_1 = 0.05, y_2 = -0.1, y_3 = 0.07, y_4 = 3$. \\
+  We believe $B \sim N(\mu, 0,05)$. \\
+  $\mu = laplacian(0, 0.01)$. \\
+  % skica
+  $P(\mu \mid B) = \frac{e^{\frac{|\mu|}{0.01}} e^{-\sum \frac{(x_i-\mu)^2}{0.05}}}{\int \dots}$. \\
+  Integral is difficult to calculate. \\
+  Sample $\mu$ with Metropolis algorithm.
+  % skica
+\end{ex}
+
+
+\section{M.C. for 1-factor in bipartite graphs}
+
+$G$ regular graph \\
+% skica
+$|A| = |B|$. \\
+How to find $1$-factor? \\
+Augmenting paths. \\
+Let $M$ be (suboptimal) matching. \\
+% skica
+If we find $s-t$ path, we switch edges and get bigger matching. \\
+Starting point. \\
+$G \; d$-regular graph. \\
+Graph $G = (A \cup B, E)$, $M$ suboptimal matching.
+\begin{itemize}
+  \item Add $s$ and add directed edges to vertices in $A$ that are not matched with weight $d$,
+  \item add $t$ and add directed edges to vertices in $B$ that are not matched with weight $d$,
+  \item orient edges in $M$ from $B$ to $A$ that weight $d-1$,
+  \item orient edges in $E \setminus M$ from $B$ to $A$ that weight $1$,
+  \item we add edge from $t$ to $s$ that weight $(|A| - |M|) d$.
+\end{itemize}
+% skica
+Observation:
+\begin{itemize}
+  \item for each vertex $x: \; deg^{-}(x) = deg^{+}(x)$ (out weights = in weights),
+  \item if $|A| > |M|$, then graph is eulerian $\implies$ there is an augmenting path.
+\end{itemize}
+How to find $s-t$ path? \\
+Do a random walk. \\
+Expected time to get from $s$ to $t$ is $h_{s,t}$ \\
+$\frac{1}{\pi(s)} = h_{s,s} = h_{s,t} + 1$.
+\begin{lemma} \text{} \\
+  Let $X$ be a M.C. defined as a random walk on directed (weighted) graph with $deg^{-}(x) = deg^{+}(x)$ for each $x$.
+  Then the stationary distribution is $\pi = \left[\frac{deg^{+}(x_i)}{|E|}\right]_{i=1}^n$.
+\end{lemma}
+$w_{ij}$: weight from $i$ to $j$.
+\begin{pro} \text{} \\
+  $\pi P = \pi \left[\frac{w_{ij}}{deg^{+}(x_i)}\right]_{i,j=1}^n = \left[\frac{\sum_j w_ji}{|E|}\right]_{i=1}^n
+  = \left[\frac{deg^{-}(x_i)}{|E|}\right]_{i=1}^n = \left[\frac{deg^{+}(x_i)}{|E|}\right]_{i=1}^n$.
+\end{pro}
+$h_{s,s} = \frac{1}{\pi_s} \leq \frac{|E|}{deg^{+}(s)} 
+\leq \frac{3(|A| - |M|) d + |M| (d-1) + (|A| - |M|) d + |M| (d-1)}{(|A| - |M|) d} \leq \frac{4 |A|}{|A| - |M|}$. \\
+Expected time to find augmenting path $\leq \frac{4 |A|}{|A| - |M|}$. \\
+$|A| = n$ \\
+Expected time to find 1-factor $\leq \frac{4n}{n-1} = 4n \sum_{i=1}^{n-1} \frac{1}{i} \leq 4n (1 + \ln n)$ - in $O(n \log n)$.
+
+\subsection{Network centrality}
+
+% skica
+Degree as measure - natural idea. \\
+Use M.C: walk randomly on the network, those that are visited more oftenly are more important. \\
+Pagerank. \\
+Let $A$ be the adjacency matrix of $G$. \\
+$P_{ij} = \alpha \frac{A_{ij}}{deg i} + (1-\alpha) \frac{1}{n}$; \\
+$\alpha$: normal random walk, \\
+$1-\alpha$: jump to any. \\
+$\alpha = 0.85$.
+
+
+
+\chapter{Randomized incremented constructions (RIC)}
+
+
+Observation: \\
+Let $S$ be a set of $n$ distinct elements. \\
+Let $X_1 \dots X_n$ be a random permutation of the elements. \\
+Let $S_i = \{X_1 \dots X_i\}$. \\
+$P(X_i = \min (S_i)) = \frac{1}{i}$. \\
+$Y = \left| \{j \in \{1 \dots n\} \mid j = \text{ minimal of } S_j\} \right|$ \\
+$Y = Y_1 + \dots + Y_n$ \\
+$Y_j = \begin{cases}
+  1 \text{ if } i = \min S_i \\
+  0 \text{ otherwise}
+\end{cases}$ \\
+$E(Y) = \sum_{i=1}^{n} E(Y_i) = \sum_{i=1}^{n} \frac{1}{i}$ in $O(\log n)$.
+\begin{alltt}
+  Alg():
+    X1 .. Xn = random permutation of S
+    min = X1
+    for i in range(1,n+1):
+      if Xi < min:
+        print("HA")
+        min = Xi
+\end{alltt}
+We get $O(\log n)$ \sn{HA} printed. \\
+Incremental construction (IC). \\
+Input $S = \{s_1 \dots s_n\}$. \\
+We will build structures $DS(S_i)$: \\
+$DS(S_1 \to \dots \to DS(S_n))$. \\
+$DS(S_n)$ will help us give answer. \\
+Randomized: permute $S$ at the beginning.
+
+
+\section{Quicksort as RIC}
+
+$S$: set of elements we want to order. \\
+$X_1 \dots X_n$: random permutation of $S$. \\
+$S_i = \{X_1 \dots X_i\}$. \\
+$S_i$ splits $\R$. \\
+% skica
+Define $DS(S_i)$:
+\begin{itemize}
+  \item save intervals: each interval will be saved by endpoints,
+  \item for each interval we will be saving its points,
+  \item for each $X_j$, $j > i$ we will save in which interval it is,
+  \item for each left point of the interval we will save the right point.
+\end{itemize}
+\begin{alltt}
+  QuicksortEIC(S):
+    # start of DS(Si)
+    I=[(-\(\infty\),\(\infty\))]
+    P[(-\(\infty\),\(\infty\))] = S
+    for each Xi:
+      Int(Xi) = (-\(\infty\),\(\infty\))
+    Next(\(\infty\)) = \(\infty\)
+    # end of DS(Si)
+    for i in range(1,n+1):
+      Ii = Int(Xi) = (Xj,Xk)
+      Ii1 = (Xj,Xi)
+      Ii2 = (Xi,Xk)
+      for Xl \(\neq\) Xi, Xi \(\in\) P(I): 
+        add Xl to P(Ii1) or P(Ii2) depending on Xl < Xi or Xl > Xi
+      Next(Xj) = Xi
+      Next(Xi) = Xk
+    return [Next(\(-\infty\)), Next(Next(\(-\infty\))) ..]
+\end{alltt}
+Similarity to quicksort: spliting intervals.
+
+
 %\clearpage
 %\phantomsection
 
