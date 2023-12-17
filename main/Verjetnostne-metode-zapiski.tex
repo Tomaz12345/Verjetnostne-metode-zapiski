@@ -152,7 +152,7 @@ mathescape=true}
 }
 
 
-
+% inductive hypothesis - IH
 
 \begin{document}
 
@@ -1758,6 +1758,138 @@ $E(\max_x X_x) \neq \max_x E(X_x) = 1$.
   \end{equation*}
   $P(\text{at least for $1$ bin }j \geq k) = n \cdot \frac{1}{n^2} = \frac{1}{n}$.
 \end{pro}
+
+
+% 11. predavanje: 15.12.
+
+$U, V$, $H$ hash family, $h: U \to M$ \\
+$v \in V$ \\
+$n = |V|$ \\
+max load $O\left(\frac{\log n}{\log (\log n)}\right)$. \\
+Perfect hashing: we would like
+\begin{itemize}
+  \item $O(1)$ lookup (worst case)
+  \item $O(n)$ size of table.
+\end{itemize}
+
+
+\section{2 level hashing}
+
+Input: $V$ \\
+$n = |V|$. \\
+% skica
+Take hash function from universal family with $m = |M| = n$. \\
+Count total collisions $X$. \\
+$E(X) \leq \binom{n}{2} \cdot \frac{1}{m} \leq \frac{n}{2}$ \\
+$P(x \geq n) \stackrel{\text{Markov}}{\leq} \frac{1}{2}$ \\
+$\implies$ by repeating sample $h$ we can guarantee
+\begin{itemize}
+  \item for each $i \in M$ we store at $T[i]$ another hash table of size $C_i^2$,
+    where $C_i = $ number of elements of $V$, hashed in $i$,
+  \item we sample $h_i$ from universal hash family with $M_i = C_i^2$.
+\end{itemize}
+$P(h_i \text{ has no collisions}) \geq \frac{1}{2}$ (by lemma). \\
+We resample if $h_i$ has collisions. \\
+$E(\text{sampling } h_i) = 2$. \\
+Construction time: \\
+\begin{itemize}
+  \item step 1: $O(n)$
+  \item step 2: $O(C_1 + \cdots + C_n) = O(n)$;
+\end{itemize}
+together $O(n)$. \\
+Lookup time: $O(1)$ (evaluating $h(x)$ and $h_{h(x)}(x)$). \\
+Space: $O(C_1^2 + \dots + C_n^2)$ in $O(n)$. \\
+By first step $n >$ number of collisions of $h = \sum_{i=1}^{n} \binom{C_i}{2} = \sum_{i=1}^{n} \frac{C_i^2 - C_i}{2}$ \\
+$\implies \sum_{i=1}^{n} C_i^2 < 2n + \sum_{i=1}^{n} c_i = 3n$.
+
+
+\section{The power of 2 choices}
+
+Variant: placing $n$ balls in $n$ bins but for each ball we choose $d$ balls uniformly at random and
+put the ball in bin with minimal load.
+\begin{theorem}
+  The above process with $d \geq 2$ results in at most maximum load of $O\left(\frac{\ln (\ln n)}{\ln d}\right)$.
+\end{theorem}
+\begin{pro}(sketch). \\
+  $b_i$ = upper bound of the number of bins with load at most $i$. \\
+  Height of a ball = the number of balls in the bin, where the ball is placed. \\
+  $P(\text{a ball has height at least } i+1) \leq \left(\frac{b_i}{n}\right)^d$ (choose $d$ times independently). \\
+  $X^{i+1}$: number of balls with height $ \geq i+1$. \\
+  $X^{i+1} = \sum_{j=1}^{n} X_j^{i+1}$ \\
+  $X_j^{i+1}$: indicator variable of $j$-th ball having height $i+1$. \\
+  $E(X^{i+1}) \leq \sum_{j=1}^{n} \left(\frac{b_i}{n}\right)^d = d \cdot \left(\frac{b_i}{n}\right)^d$. \\
+  Chernoff bound: with high probability $X^{i+1} \leq 2 n \left(\frac{b_i}{n}\right)^d$. \\
+  $X^{i+1} \geq$ number of bins with load at least $i+1$. \\
+  Define (set) \\
+  $b_{i+1} = \frac{\sum b_i^d}{n^{d-1}}$ \\
+  $b_4 = \frac{n}{4}$ \\
+  $b_{i+4} = \frac{n}{2^{2 \cdot d^i - \sum_{j=0}^{i-1} d^j}}$
+  \begin{itemize}[label={}]
+    \item $i=0$: $b_4 = \frac{n}{2^{2^1}} = \frac{n}{4}$
+    \item $i \to i+1$:
+      \begin{align*}
+        b_{i+4} &= \frac{2 \cdot b_{i+3}}{n^{d-1}} \\
+        &\stackrel{IH}{=} \frac{2 \cdot \left(\frac{n}{2^{2 \cdot d^i - \sum_{j=0}^{i-1} d^j}}\right)^d}{n^{d-1}} \\
+        &= \frac{2^1 \cdot n^d}{n^{d-1} \cdot 2^{2 \cdot d^{i+1} - \sum_{j=1}^{i} d^j}} \\
+        &= \frac{n}{2^{2 \cdot d^{i+1} - \sum_{j=0}^{i} d^j}}.
+      \end{align*}
+  \end{itemize}
+  In particular: $b_{i+4} \leq \frac{n}{2^{d^i}} < 1$ when?
+  \begin{align*}
+    n &< 2^{d^i} \\
+    \log_2 n &< d^i \\
+    \log_d \log_2 n &< i
+  \end{align*}
+  $\implies$ for $i = \frac{\log (\log_2 n)}{\log d}$ is $b_i < 1$ $\implies$ no bins with load
+  $> \frac{\log (\log_2 n)}{\log d}$.
+\end{pro}
+Application: \\
+We sample 2 hash functions $h_1, h_2: U \to M$. \\
+For element $v \in V$ we insert in $T[h_1(v)]$ or $T[h_2(v)]$ depending on which list is shorter. \\
+Max load in $O(\log (\log n))$.
+
+
+\section{Cockoo hashing}
+
+Idea: use 2 hash functions but allow moving elements later. \\
+We want to have at most 1 element at each entry in the table. \\
+Inserting: \\ % skica
+\begin{itemize}
+  \item if empty: insert,
+  \item if not empty: push other element to its other choise, repeat recursively.
+\end{itemize}
+Questions:
+\begin{itemize}
+  \item how many do I need to move,
+  \item how many elements can I insert before problems?
+\end{itemize}
+We can think of positions in the table as vertices and elements of $V$ as edges. \\
+$|V|$ edges are inserted uniformly at random (if ideal hash function)
+$\implies$ random graph. \\
+Erdös-reny model: $G_{n,m} \approx G_{n,p}$ if $m = \binom{n}{2} p$ (A.S. properties). \\
+If $np < 1 - \epsilon$: all connected components have size at most $O(\log n)$,
+components are trees or at most 1 cycle per component, expected size of a component is $O(1)$. \\
+% skica
+% skica
+Fact: if graph has at msot 1 cycle per component, then inserting can be done and takes at most
+$2 \cdot $(size of component) time (each edge changes direction at most 2 times).
+\begin{theorem} \text{} \\
+  Let $n = |U|$, $h_1, h_2: U \to M$, $m = |M| = 2 \cdot (1 + \epsilon) \cdot n$,
+  then with high probability cockoo hashing works correctly with
+  \begin{itemize}
+    \item inserting time:
+      \begin{itemize}
+        \item $O(\log n)$ time worst case,
+        \item $O(1)$ expected case,
+      \end{itemize}
+    \item space: $O(n)$,
+    \item lookup time: $O(1)$.
+  \end{itemize}
+\end{theorem}
+Dynamically add element: \\
+$m = 2 \cdot (1 + \epsilon) \cdot n$ \\
+$p = \frac{m^{'}}{\binom{n^{'}}{2}} = \frac{2 m^{'}}{n^{'} (n^{'}-1)}$ \\
+$pn^{'} = \frac{2m^{'}}{(n^{'}-1)} = \frac{2n^{'}}{2 (1+\epsilon) n^{'}} = \frac{1}{1+\epsilon} < 1 + \epsilon^{'}$
 
 
 %\clearpage
