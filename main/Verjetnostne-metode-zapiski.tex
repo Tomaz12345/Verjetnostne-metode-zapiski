@@ -1892,6 +1892,149 @@ $p = \frac{m^{'}}{\binom{n^{'}}{2}} = \frac{2 m^{'}}{n^{'} (n^{'}-1)}$ \\
 $pn^{'} = \frac{2m^{'}}{(n^{'}-1)} = \frac{2n^{'}}{2 (1+\epsilon) n^{'}} = \frac{1}{1+\epsilon} < 1 + \epsilon^{'}$
 
 
+% 12. predavanje: 22.12.
+
+\section{Bloom filter}
+
+Take $k$ hash functions $h_1 \dots h_k$ at random, $h_i: U \to M, T[0 \dots m-1]$. \\
+$V \subset U$, for every element $v \in V$ set $T[h_i(v)] = 1 \; \forall i \in \{1 \dots k\}$. \\
+False positives: $x \notin V$ such that $T[h_i(x)] = 1 \; \forall i \in \{1 \dots k\}$. \\
+For each $T[j] \; P(T[j] = 0) = \left(\left(1 - \frac{1}{m}\right)^n\right)^k \approx e^{-\frac{nk}{m}}$; \\
+$k$: each hash function, $n$: for each $v$. \\
+Now \\
+$P\left(T[h_i(x)] = 1 \; \forall i, \forall x \notin V\right) \approx \left(1 - e^{-\frac{nk}{m}}\right)^k = f(k)$
+- probability of a false positive. \\
+$\left(1 - e^{-\frac{nk}{m}}\right)$: 1 position. \\
+Searching for a minimum: \\
+$f^{'}(k) = 0$ \\
+$\implies k = \ln 2 \cdot \frac{m}{n}$ \\
+$f\left(\ln 2 \cdot \frac{m}{n}\right) = \left(\frac{1}{2}\right)^{\ln 2 \frac{m}{n}} \approx 0.6185^{\frac{m}{n}}$ \\
+$\implies$ we choose $m$ such that $0.6185^{\frac{m}{n}}$ small (in $O(n)$) \\
+$\implies$ calculating $k = \ln 2 \cdot \frac{m}{n}$
+\begin{itemize}[label={}]
+  \item $\implies$ hashing with space $O(n)$
+  \item $\implies$ checking in $O(1)$
+  \item $\implies$ probability of error small.
+\end{itemize}
+
+
+\section{Linear probing}
+
+$V \subset U$, $h: U \to M$, $T[0 \dots m-1]$.
+\begin{itemize}
+  \item Insert $v \in V$: check $T[h(v)], T[h(v)+1], T[h(v)+1] \dots$ until finding empty space,
+    then insert it.
+    % skica
+  \item Check if $x \in V$ by checking $T[h(x)] \stackrel{?}{=} x, T[h(x)+1] \stackrel{?}{=} x \dots$
+    until finding $x$ or finding empty.
+\end{itemize}
+$x \in U$ \\
+$X$: number of steps to check if $x \in V$. \\
+$E(X) = ?$ \\
+% skica
+Block of size $2^l$ is bad if it has more than $2^l \cdot \frac{2}{3}$ values. \\
+Set $\frac{n}{m} = \frac{1}{3}$. \\
+Expected number of elements hashed in block of size $2^l$ is $\frac{1}{3} \cdot 2^l$. \\
+\begin{align*}
+  E(X) &= \sum_{i=0}^{n} P(X = i) \cdot i \\
+  &\leq \sum_{j=0}^{\log_2 n} P(2^{j-1} < X \leq 2^j) \cdot 2^j \\
+  &\leq \sum_{j=0}^{\log_2 n} P(\text{block above $h(x)$ of size $2^j$ is bad}) \cdot c \cdot 2^j.
+\end{align*}
+$c$: not aligned? \\
+$P(\text{block of size $2^j$ is bad}) = P(Y > \frac{2}{3} \cdot 2^j) =
+P(Y - \frac{1}{3} \cdot 2^j > \frac{1}{3} \cdot 2^j)$; \\
+$Y$: number of elements hashed to the block. \\
+$E(Y) = \frac{1}{3} \cdot 2^j$ \\
+$E(X) \stackrel{\text{Chernoff}}{\leq} e^{-k \cdot 2^j}$; Chernoff: sum of independent indicators. \\
+$E(X) < O(1) \cdot \sum_{j=0}^{\log_2 n} 2^j \cdot e^{-k \cdot 2^j}$ in $O(1)$ \\
+$\implies$ checking in $O(1)$. \\
+Chernoff: if ideal hash function; 5 independent is enough.
+
+
+\chapter{Data streams}
+
+
+Stream of values \\
+$\sigma = a_1, a_2 \dots a_n$ \\
+$a_i$: tokens \\
+$a_i \in [n]$ \\
+$m$: length of stream (very large).
+\begin{defn}
+  $f_i = \left| \{j \mid a_j = i\} \right|$
+\end{defn}
+We could be interested in
+\begin{itemize}
+  \item number of different token,
+  \item frequency of some token,
+  \item frequent tokens: $\{i \in [n] \mid f_i \geq \frac{m}{10}\}$
+  \item moments: $\lVert f \rVert^2 = \sum_{i \in [n]} f_i^2$
+  \item $\vdots$
+\end{itemize}
+We want to use memory in $O(poly(\log n, \log m)) << O(n, n)$. \\
+Most problems cannot be solved precisely, hence we search for $(\epsilon, \delta)$-approximation. \\
+Algorithm $A(G)$:
+\begin{itemize}
+  \item initialitazion,
+  \item incremental steps,
+  \item finalization
+\end{itemize}
+using randomness (oblivious stream - it doesn't know which randomly,
+e.g. we can choose stream that \sn{attacks algorithm}).
+
+
+\section{Count min sketch}
+
+For a given $i \in [n]$ (token) at the end of stream give $f_i$. \\
+$A(\sigma, \epsilon, \delta)$:
+\begin{itemize}[label={}]
+  \item Init: $k = \lceil \frac{2}{\epsilon} \rceil, t = \lceil \log_2 \left(\frac{1}{\delta}\right) \rceil$.
+  \item We choose $t$ hash functions $h_1 \dots h_t: [n] \to M = [k] = \{1 \dots k\}$ from a universal family $H$.
+  \item Let $C[0 \dots t-1][0 \dots k-1]$ be 2-dim (hash) table, $C[i][j] = 0 \; \forall i,j$.
+  \item Updates:
+    \begin{itemize}[label={}]
+      \item for every token $a_i \in \sigma$ we update $C$
+      \begin{itemize}[label={}]
+        \item for $j = 0, 1 \dots t-1$
+        \begin{itemize}[label={}]
+          \item $C[i][h_i(a_j)] += 1$
+        \end{itemize}
+      \end{itemize}
+    \end{itemize}
+  \item Output: we asked $a \in [n]$, return $\overline{f_a} = \min_{0 \leq j \leq t-1} C[j][h_j(a)]$;
+    min collitions.
+\end{itemize}
+\begin{theorem} \text{} \\
+  For every $a \in [n]$ it holds \\
+  $f_a \leq \overline{f_a} \leq f_a + \epsilon m$ \\
+  with probability at least $1 - \delta$.
+\end{theorem}
+Notice: space needed $O(t \cdot k \cdot \log m) =
+O\left(\frac{2}{\epsilon} \cdot \log_2 \left(\frac{1}{\delta}\right) \log m\right)$.
+\begin{pro} \text{} \\
+  $\forall i \in [t]: C[i][h_i(a)] \geq f_a \implies \overline{f_a} \geq f_a$. \\
+  Fix $a$. \\
+  Let $X_i = C[i][h_i(a)] - f_a$ excess of $i$-th count. \\
+  $I_{x,y}^i = \begin{cases}
+    1: \text{ if } h_i(x) = h_i(y) \\
+    0: \text{ else}
+  \end{cases}$ \\
+  $X_i = \sum_{y \in [n], y \neq a} I_{x,y}^i \cdot f_y$.
+  \begin{align*}
+    E(X_i) &= \sum_{y \in [n], y \neq a} E(I_{x,y}^i) \cdot f_y \\
+    &\stackrel{*}{\leq} \sum_{y \in [n], y \neq a} \frac{1}{k} \cdot f_y \\
+    &\leq \frac{1}{n} \cdot m \\
+    &\stackrel{**}{\leq} \frac{m}{2}
+  \end{align*}
+  $*$: hash function from universal family. \\
+  $**: P(X_i \geq \epsilon m) \stackrel{\text{Markov}}{\leq} \frac{\epsilon m}{2 \epsilon m} = \frac{1}{2}$
+  for fixed $i$. \\
+  \begin{align*}
+    P(\overline{f_a} - f_a \geq \epsilon m) &\leq P(X_i \geq \epsilon m \; \forall i) \\
+    &\stackrel{\text{indep.}}{=} \left(\frac{1}{2}\right)^t \leq \delta.
+  \end{align*}
+\end{pro}
+
+
 %\clearpage
 %\phantomsection
 
