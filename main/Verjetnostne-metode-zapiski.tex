@@ -2035,6 +2035,223 @@ O\left(\frac{2}{\epsilon} \cdot \log_2 \left(\frac{1}{\delta}\right) \log m\righ
 \end{pro}
 
 
+% 13. predavanje: 5.1.
+
+\section{Estimating the number of distinct elements}
+
+We want $d = |\{i \in [n], f(i) > 0\}|$. \\
+Define for $x \in \N$: \\
+$zeros(x) = \max \{i \mid 2^i \text{ divides } i\}$: number of zeros at the end in binary representation of $x$. \\
+Alg($\sigma$):
+\begin{itemize}[label={}]
+  \item Init:
+  \begin{itemize}
+    \item $h$: random hash function from 2-independent family.
+    \item $\#$ recall: $[n]$: all possible elements of $\sigma$.
+    \item $h: [n] \to [n]$
+    \item unlog? $n = 2^{n^{'}}$
+    \item $z = 0$
+  \end{itemize}
+  \item Update:
+  \begin{itemize}[label={}]
+    \item $a_i \in \sigma$
+    \item if $zeros(h(a_i)) \geq z$:
+    \begin{itemize}[label={}]
+      \item $z = zeros(h(a_i))$
+    \end{itemize}
+  \end{itemize}
+  \item Output:
+  \begin{itemize}[label={}]
+    \item $\overline{d} = 2^{z + \frac{1}{2}}$
+  \end{itemize}
+\end{itemize}
+Define $\forall a \in [n], r \in \N$ \\
+$X_{r, a} = \begin{cases}
+  1: \text{ if } zeros(h(a)) \geq r \\
+  0: \text{ else}
+\end{cases}$ \\
+$Y_r = \sum_{a \in \sigma} X_{r, a}$. \\
+Let $\overline{z}$ be $z$ at the end of the algorithm: $\overline{d} = 2^{\overline{z} + \frac{1}{2}}$. \\
+Notice: \\
+$Y_r > 0 \iff \overline{z} \geq r$ \\
+$Y_r = 0 \iff \overline{z} < r$.
+\begin{lemma} \text{} \\
+  $P(X_{r, a} = 1) = \frac{1}{2^r}$, \\
+  $P(X_{r, a_1} = 1 \land X_{r, a_2} = 1) = \frac{1}{\left(2^r\right)^2}$.
+\end{lemma}
+\begin{pro} \text{} \\
+  $P(X_{r, a} = 1) = P(zeros(h(a)) \geq r) = \frac{2^{n^{'}-r}}{2^{n^{'}}} = \frac{1}{2^r}$; \\
+  $2^{n^{'}}$: all, $2^{n^{'}-r}$: fixed. \\
+  $P(X_{r, a_1} = 1 \land X_{r, a_2} = 1) \stackrel{h \text{ 2 indep.}}{=}
+  P(X_{r, a_1} = 1) \cdot P(X_{r, a_2} = 1) = \frac{1}{\left(2^r\right)^2}$.
+\end{pro}
+$P(\overline{d} \geq 3d)$ small? \\
+$E(Y_r) = \sum_{a \in \sigma} E(X_{a, r}) = \sum_{a \in \sigma} \frac{1}{2^r} = \frac{d}{2^r}$ \\
+Let $k \in \N$ be such that $2^{k + \frac{1}{2}} \geq 3d > 2^{k - \frac{1}{2}}$.
+\begin{align*}
+  P(\overline{d} > 3d) &\leq P(2^{\overline{z} - \frac{1}{2}} > 2^{k - \frac{1}{2}}) \\
+  &= P(\overline{z} + \frac{1}{2} > k - \frac{1}{2}) \\
+  &= P(\overline{z} \geq k) \\
+  &\stackrel{\text{lemma}}{=} P(Y_k > 0) \\
+  &\stackrel{\in \N}{=} P(Y_k \geq 1) \\
+  &\stackrel{\text{Markov}}{\leq} \frac{E(Y_k)}{1} = \frac{d}{2^k} \\
+  &\stackrel{k}{\leq} \frac{d \cdot 2^{\frac{1}{3}}}{3d} = \frac{\sqrt{2}}{3}.
+\end{align*}
+$P(\overline{d} \leq \frac{d}{3})$ small? \\
+Let $l \in \N$ be such that $2^{l - \frac{1}{2}} \leq \frac{d}{3} < 2^{l + \frac{1}{2}}$.
+\begin{align*}
+  P(\overline{d} < \frac{d}{3}) &\leq P(2^{\overline{z} + \frac{1}{2}} < 2^{l + \frac{1}{2}}) \\
+  &= P(\overline{z} + \frac{1}{2} < l + \frac{1}{2}) \\
+  &= P(\overline{z} \leq k) \\
+  &\stackrel{\text{lemma}}{=} P(Y_l = 0) \\
+  &= P(Y_l - \frac{d}{2^l} < -\frac{d}{2^l}) \\
+  &\leq P(|Y_l - \frac{d}{2^l}| \geq \frac{d}{2^l}) \\
+  &\stackrel{\text{Chebisev}}{\leq} \frac{Var(Y_l)}{\left(\frac{d}{2^l}\right)^2} \\
+  &\stackrel{l}{\leq} \frac{d \cdot 2^{\frac{1}{3}}}{3d} = \frac{\sqrt{2}}{3};
+\end{align*}
+\begin{align*}
+  Var(Y_l) &= Var\left(\sum_{a \in \sigma} X_{a, l}\right) \\
+  &\stackrel{h \text{ 2-indep.}}{=} \sum_{a \in \sigma} Var(X_{a, l}) \\
+  &= \sum_{a \in \sigma} E(X_{a, l}^2) - E(X_{a, l})^2 \\
+  &\stackrel{E(X_{a,l}) \in \{0,1\}}{\leq} \sum_{a \in \sigma} E(X_{a, l}) \\
+  &= \frac{d}{2^l}.
+\end{align*}
+$P\left(\frac{d}{3} < \overline{d} < 3d\right) \geq 1 - \frac{2 \sqrt{3}}{3}$. \\
+We use algorithm $k$-times, getting $\overline{d_1} \dots \overline{d_k}$ (we need independent hash functions). \\
+Define: $\overline{d} = median(\overline{d_1} \dots \overline{d_k})$. \\
+\begin{align*}
+  P(\overline{d} \geq 3d) &= P(\text{at least} \lceil \frac{k}{2} \rceil \overline{d}-s \text{ are } \geq 3d) \\
+  &= P(X \geq \frac{k}{2}) \leq e^{-ck};
+\end{align*}
+$c$: some constant, \\
+$X = \sum_{i=1}^{k} X_i$, \\
+$X_i = \begin{cases}
+  1: \text{ if } \overline{d_i} \geq 3d \\
+  0: \text{ else}
+\end{cases}$ \\
+$P\left(\overline{d} \leq \frac{d}{3}\right) = \dots$
+
+
+
+\chapter{Interactive proofs}
+
+
+A protocol between $P$ prover and $V$ verifier for function $f$. \\
+% skica
+Both share $x$, \\
+$r$: randomness used, \\
+$P, V$: algorithms, \\
+$out(V, x, r, P) = \begin{cases}
+  1: \; V \text{ agrees that } f(x) = y \\
+  0: \text{ else}
+\end{cases}$. \\
+Goal: minimal communication, minimal work for $V$. \\
+Completeness: \\
+for every $x \in D$ (domain) \\
+$P(out(V, x, r, P) = 1) \geq 1 - \delta_c$ for some $\delta_c \in [0, 1)$. \\
+Soundness: \\
+for every $x$ such that $f(x) \neq y$ \\
+$P(out(V, x, r, P^{'}) = 1) \leq \delta$ for every $P^{'}, \delta_s \in [0, 1)$. \\
+Computational soundness: \\
+soundness, $P^{'}$ computationally bounded. \\
+Zero-knowledge: \\
+informal: verifier learns nothing behind the claim.
+\begin{ex} \text{} \\
+  Input: $G$ graph, \\
+  $f(G) = \begin{cases}
+    1: \text{ if $G$ hamiltonian} \\
+    0: \text{ else}
+  \end{cases}$ \\
+  $G \to P \stackrel{m_1: (v_1 \dots v_n)}{\longrightarrow} V \leftarrow G$, \\
+  $V$: verifies that $m_1$ is hamiltonian cycle. \\
+  Proof: $O(n)$. \\
+  Verifier com. $O(n)$.
+\end{ex}
+\begin{ex} \text{} \\
+  Input: $A, B$ matrices, \\
+  $f(A, B) = A \cdot B$, \\
+  $(A, B) \to P \stackrel{C}{\to} P \leftarrow (A, B)$. \\
+  $P$: compute $C = A \cdot B$, send $C$, \\
+  $V$: check $A (B v_i) = C v_i$ for random $v_i$. \\
+  Prover: matrix multiplication $O(n^3) \; (O(n^{\log_2(7)}))$. \\
+  Verifier: $O(n^2)$. \\
+  Proof size: $O(n^3)$ (possible to reduce is $O(\log n)$).
+\end{ex}
+\begin{ex} \text{} \\
+  Input: $(n, y) \in \N^2$, \\
+  $f(n, y) = \begin{cases}
+    1: \text{ if there exists $x$ such that } y = x^2 (\text{mod } n) \\
+    1: \text{ else}
+  \end{cases}$; \\
+  qoaroatic reducibility problem. \\
+  $(n, y) \to P \to V \leftarrow (n, y)$. \\
+  $P$: sample $r \in \Z_n$, $s = r^2$, send $s$, \\
+  $V$: sample $b \in \{0, 1\}$, send $b$, \\
+  $P$: if $b = 0$: $m_2 = r$, if $b = 1$: $m_2 = r \cdot x$, send $m_2$, \\
+  $V$: accepts if $m_2^2 = s \cdot y^b$. \\
+  Completeness:
+  \begin{itemize}[label={}]
+    \item $m_2^2 = s \cdot y^b$
+    \item if $b = 0:$
+    \begin{itemize}[label={}]
+      \item $r^2 = m^2 = s$ \checkmark
+    \end{itemize}
+    \item if $b = 1:$
+    \begin{itemize}[label={}]
+      \item $m^2 = s y$ 
+      \item $r^2 x^2 = s y$ \checkmark ($r^2 = s, x^2 = y$)
+    \end{itemize}
+  \end{itemize}
+  Soundness:
+  \begin{itemize}
+    \item 2 options for what prover does.
+    \begin{itemize}
+      \item Send $s$ such that there is no $r$ that $r^2 = s$. \\
+        Then with probability $\frac{1}{2}$ is $b = 0$. \\
+        Then prover needs to send $m_2$ such that $m_2^2 = s$ (impossible) \\
+        $\implies$ fail with probability at least $\frac{1}{2}$.
+      \item Send $s$ such that $r^2 = s$. \\
+        Then with probability $\frac{1}{2}$ is $b = 1$. \\
+        $m_2^2 = s y = r^2 y \implies y = (m_2 r^{-1})^2 \implies \exists x: x^2 = y$: contradiction \\
+        $\implies$ fail with probability at least $\frac{1}{2}$.
+    \end{itemize}
+  \end{itemize}
+  With zero-knowledge.
+\end{ex}
+
+
+\section{Sum-check protocol}
+
+Let $g(x_1 \dots x_n)$ be multivariate polynomial of degree $d$ over $\F$. \\
+Let $H_g = \sum_{b_1 \dots b_n \in \{0, 1\}} g(b_1 \dots b_n)$. \\
+$P$ wants to convince $V$ that $c = H_g $. \\
+$g \to P \to V \leftarrow g$. \\
+$P$: sends $c$, \\
+$P$: compute $g_1(x) = \sum_{b_2 \dots b_n \in \{0, 1\}} g(x, b_2 \dots b_n)$, send $g_1(x)$, \\
+$V$: check $g_1(0) + g_1(1) = c$, $deg(g) \leq d$, sample $r_1 \in \F$, send $r_1$, \\
+for $j = 2 \dots n-1$:
+\begin{itemize}[label={}]
+  \item $P$: compute $g_j(x) = \sum_{b_{j+1} \dots b_n \in \{0, 1\}} g(r_1 \dots r_{j-1}, x, b_{j+1} \dots b_n)$, send $g_j(x)$,
+  \item $V$: checks $g_j(0) + g_j(1) = g_{j-1}(r_{j-1})$, $deg(g_j) \leq d$, sample $r_j \in \F$, send $r_j$,
+\end{itemize}
+$P$: compute $g_n(x) = g(r_1 \dots r_{n-1}, x)$, send $g_n(x)$, \\
+$V$: checks $g_n(0) + g_n(1) = g_{n-1}(r_{n-1})$, $deg(g_n) \leq d$, 
+for random $r_n \in \F$ check $g_n(r_n) = g(r_1 \dots r_n)$. \\
+Completeness:
+\begin{itemize}[label={}]
+  \item \checkmark (sum, all possibilities).
+\end{itemize}
+Cost:
+\begin{itemize}[label={}]
+  \item Prover: $O\left(2^n\right)$,
+  \item verifier: evaluate $g_i \; \forall i$, $g$ at one point, $<< O\left(2^n\right)$.
+\end{itemize}
+Communication:
+\begin{itemize}[label={}]
+  \item $deg(g_1) + \dots + deg(g_{n-1}) + O(n)$ elements of $\F$.
+\end{itemize}
+
+
 %\clearpage
 %\phantomsection
 
