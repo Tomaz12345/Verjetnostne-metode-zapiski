@@ -2252,6 +2252,209 @@ Communication:
 \end{itemize}
 
 
+% 14. predavanje: 12.1.
+
+Prove that $H_g = \sum_{b_1 \dots b_n \in \{0, 1\}} g(b_1 \dots b_n)$. \\
+Soundness:
+\begin{itemize}[label={}]
+  \item $P$: sends $g_i(x)$.
+  \item If $P$ cheats, at least one of polynomials is not correct.
+  \item Sends $g_i^{'}(x) \neq g_i(x)$.
+  \item Verifier checks $g_i^{'}(r_i) = g_{i+1}(0) + g_{i+1}(1) = g_i(r_i)$
+  \item $\to$ probability of this: $\leq \frac{d}{|\F|}$.
+  \item Soundness error: $\leq n \cdot \frac{d}{|\F|}$; union bound of rounds.
+\end{itemize}
+Application 1:
+\begin{itemize}[label={}]
+  \item Counting solutions of SAT.
+  \item $F$ SAT formula with $s$ operations and $n$ variables.
+  \item Replace with polynomial $g(x_1 \dots x_n)$ such that $F(b_1 \dots b_n) = g(b_1 \dots b_n)$.
+  \item For every $b_1 \dots b_n$:
+  \item replace $AND(x,y)$ with $x \cdot y$, $OR(x,y)$ with $x + y - x \cdot y$, $NOT(x)$ with $1-x$.
+  \item Number of SAT solutions = $\sum_{b_1 \dots b_n \in \{0, 1\}} F(b_1 \dots b_n) \\
+    = \sum_{b_1 \dots b_n \in \{0, 1\}} g(b_1 \dots b_n)$.
+  \item Prover can prove that $H_g =$ number of solutions by using sum-check.
+  \item Complexity:
+    \begin{itemize}[label={}]
+      \item prover: $O\left(2^n\right)$,
+      \item proof size (communication complexity): $O(n)$ - $n$ polynomials,
+      \item verifier: $O(n + s)$.
+    \end{itemize}
+  \item Error: $\leq \frac{n \cdot s}{|\F|}$; $s$: number of operations.
+\end{itemize}
+Application 2:
+\begin{itemize}[label={}]
+  \item Counting triangles in $G$.
+  \item $A$: adjacency matrix.
+  \item Number of triangles in $G = \frac{tr\left(A^3\right)}{6}$.
+  \item We think of $A$ as a mapping.
+  \item $[n] \times [n] \to \{0, 1\}$.
+  \item Define $A^{'}: \{0, 1\}^{\log_2 n} \times \{0, 1\}^{\log_2 n} \to \{0, 1\}$,
+  \item such that $A(i, j) = A^{'}(binary(i), binary(j))$.
+  \item For example: $n=16$, $A(0, 3) = A^{'}(0000, 0011)$.
+  \item Now we define polynomial $f_A: \F^{\log_2 n} \times \F^{\log_2 n} \to \F$
+  \item $f_A(x_1 \dots x_{\log_2 n}, y_1 \dots y_{\log_2 n})$ such that
+  \item $f_A(b_1 \dots c_{\log_2 n}) = A^{'}(b_1 \dots c_{\log_2 n})$ for every $b_1 \dots c_{\log_2 n} \in \{0, 1\}$.
+  \item Example: $A = \begin{bmatrix}0 & 1 \\ 1 & 0\end{bmatrix}, f_A(x, y) = x(1-y) + y(1-x)$.
+  \item In general:
+    \begin{align*}
+      &f_A(x_1 \dots x_{\log_2 n}, y_1 \dots y_{\log_2 n}) \\
+      = &\sum_{a,b \in \{0, 1\}^{\log_2 n}, A^{'}(a,b)=1} (-1)^{num\_zeros(a,b)}
+      (x_1 - (1 - a_1)) \dots (y_{\log_2 n} - (1 - b_{\log_2 n})).
+    \end{align*}
+  \item Now we define $g_A(x, y, z) = f_A(x, y) \cdot f_A(y, z) \cdot f_A(z, x)$, $x, y, z \in \F^{\log_2 n}$.
+  \item Number of triangles $= \frac{\sum_{a, b, c \in \{0, 1\}^{\log_2 n}} g_A(a, b, c)}{6}$
+  \item $\implies$ we can use sum-check.
+  \item Proof size: $O(3 \cdot \log_2 n)$ (number of rounds $\to$ poly),
+  \item verifier: $O(\log_2 n) + O\left(n^2\right)$.
+\end{itemize}
+
+
+\section{SNARK}
+
+Succing Non-interactive ARgument of Knowledge. \\
+Succint: proof short and verification fast. \\
+Non-interactive: just sending a proof. \\
+$x \rightarrow P \rightarrow V \leftarrow x$. \\
+$P$: convince $V$ that $f(x) = y$.
+\begin{itemize}
+  \item $f(x) = x^3 + x + 5$ as a algebraic circuit. \\
+    Break down into $+, -, *, /$ in some field $\Z_p$ \\
+    % skica
+    Proof with states $\overrightarrow{s} = (five, x, out, s_1, s_2, s_3)$. \\
+    Example: proof that $f(3) = 35$. \\
+    $\overrightarrow{s} = (1, 3, 35, 9, 27, 30)$.
+  \item To R1CS. \\
+    Give vectors $\overrightarrow{a_i}, \overrightarrow{b_i}, \overrightarrow{c_i}$
+    for each state such that
+    \begin{equation*}
+      (\overrightarrow{a_i} \cdot \overrightarrow{s}) \cdot
+      (\overrightarrow{b_i} \cdot \overrightarrow{s}) =
+      (\overrightarrow{c_i} \cdot \overrightarrow{s}) \iff \text{ gate $i$ was correctly calculated}.
+    \end{equation*}
+    Example.
+    \begin{itemize}[label={}]
+      \item For gate 1 ($\cdot$):
+        \begin{align*}
+          \overrightarrow{a_1} &= [0, 1, 0, 0, 0, 0] \\
+          \overrightarrow{b_1} &= [0, 1, 0, 0, 0, 0] \\
+          \overrightarrow{c_1} &= [0, 0, 0, 1, 0, 0]
+        \end{align*}
+        $\overrightarrow{a_1} \cdot \overrightarrow{s} = x, \overrightarrow{c_1} \cdot \overrightarrow{s} = s_1$.
+      \item For gate 3 ($+$):
+        \begin{align*}
+          \overrightarrow{a_3} &= [0, 1, 0, 0, 1, 0] \\
+          \overrightarrow{b_3} &= [1, 0, 0, 0, 1, 0] \\
+          \overrightarrow{c_3} &= [0, 0, 0, 0, 0, 1]
+        \end{align*}
+        $(x + s_2) \cdot 1 = s_3$.
+    \end{itemize}
+    We have instead of circuit
+    \begin{equation*}
+      \begin{bmatrix}\overrightarrow{a_1} \\ \overrightarrow{a_2} \\ \vdots \\ \overrightarrow{a_n}\end{bmatrix}
+      \cdot \overrightarrow{s} \odot
+      \begin{bmatrix}\overrightarrow{b_1} \\ \overrightarrow{b_2} \\ \vdots \\ \overrightarrow{b_n}\end{bmatrix}
+      \cdot \overrightarrow{s} -
+      \begin{bmatrix}\overrightarrow{c_1} \\ \overrightarrow{c_2} \\ \vdots \\ \overrightarrow{c_n}\end{bmatrix}
+      \cdot \overrightarrow{s} = \overrightarrow{0}.
+    \end{equation*}
+    $\odot$: coordinate-wise multiplication. \\
+    $\overrightarrow{s}$ needs to be solution for
+    \begin{equation*}
+      A \cdot \overrightarrow{s} \odot B \cdot \overrightarrow{s} = C \cdot \overrightarrow{s};
+    \end{equation*}
+    $A, B, C \; m \times n$ matrices.
+  \item To Quadratic Arithmetic Programs (QAP). \\
+    Let $a_i(x)$ be a polynomial such that \\
+    $a_i(j) = \overrightarrow{a}_j[i]$ for $i \in [n], j \in [m]$. \\
+    $A = \begin{bmatrix}
+      a_1(1) & a_2(1) & \dots & a_n(1) \\
+      a_1(2) & \dots & & \\
+      \vdots & & & \\
+      a_1(m) & \dots & & a_n(m)
+    \end{bmatrix}$. \\
+    Example:
+    \begin{itemize}[label={}]
+      \item $a_1(x) = -5 + 9.16x + 5x^2 + 0-833x^3$
+      \item $a_2(x) = 8 - 11.33x + 5x^2 - 0.666x^3$
+      \item $a_3(x) = 0$
+      \item $\vdots$
+      \item $a_6(x) = \dots$
+      \item $[a_1(1) \dots a_6(1)] = [0, 1, 0, 0, 0, 0] = \overrightarrow{a_1}$.
+    \end{itemize}
+    We get $a_i$ with interpolation $deg \; a_i \leq n-1$.
+    \begin{equation*}
+      \left([a_1(x), a_2(x) \dots a_n(x)] \cdot \overrightarrow{s}\right) \odot
+      \left([b_1(x), b_2(x) \dots b_n(x)] \cdot \overrightarrow{s}\right) -
+      \left([c_1(x), c_2(x) \dots c_n(x)] \cdot \overrightarrow{s}\right)
+    \end{equation*}
+    should have zeros in $1, 2 \dots m$ \\
+    $\iff \; A(x) \cdot B(x) \cdot C(x) = (x-1) (x-2) \dots (x-m) \cdot h(x)$. \\
+    Summary up to now:
+    \begin{itemize}
+      \item instead of states we have polynomials,
+      \item instead of states, we have coefficients $\cdot \overrightarrow{s}$.
+    \end{itemize}
+    $a_i(x), b_i(x), c_i(x) \to P \to V \leftarrow a_i(x), b_i(x), c_i(x)$. \\
+    $P \to V$: $A(x), B(x), C(x), h(x)$: too much. \\
+    $P \to V$: $A(r), B(r), C(r), h(r)$, $r$ random. \\
+    $V$: checks $A(r) \cdot B(r) = C(r) + h(r) \cdot t(r)$; \\
+    works if $V$ doesn't cheat. \\
+    Cryptographic background:
+    \begin{itemize}
+      \item Lets have pairs \\
+        $(g_1, h_1), (g_2, h_2) \dots (g_n, h_n)$, where $g_i^k = h_i$, you don't know $k$. \\
+        Cryptographic assumption: if we provide $(g^{'}, h^{'})$ such that \\
+        $(g^{'})^{k} = h^{'}$, then $g^{'} = g_1^{k_1} \cdot g_n^{k_n}, h^{'} = h_1^{k_1} \cdot h_n^{k_n}$.
+      \item Pairing groups. \\
+        In some group one can define a pairing \\
+        $e: G \times G \to G_r$ such that \\
+        $e(g_1 \cdot g_2, h) = e(g_1, h) \cdot e(g_2, h)$, \\
+        $e(g, h_1 \cdot h_2) = e(g, h_1) \cdot e(g, h_2)$, \\
+        $e\left(g^x, g^y\right) = e(g, g)^{xy}$.
+    \end{itemize}
+    Assume $P, V$ have
+    \begin{itemize}
+      \item $g^{a_1(r)}, g^{a_2(r)} \dots$,
+      \item $g^{b_1(r)}, g^{b_2(r)} \dots$,
+      \item $g^{c_1(r)}, g^{c_2(r)} \dots$,
+      \item $g^{t(r)}$,
+      \item $g, g^r, g^{r^2} \dots g^{r^{n-1}}$
+    \end{itemize}
+    without knowing $r$. \\
+    Improved protocol: \\
+    $P$ sends to $V$
+    \begin{itemize}
+      \item $g^{A(r)} = \left(g^{a_1(r)}\right)^{k_1} \dots \left(g^{a_n(r)}\right)^{k_n}$
+      \item $g^{B(r)} \dots$
+      \item $g^{C(r)} \dots$
+      \item $g^{h(r)} = g^{h_0} \cdot \left(g^r\right)^{k_1} \dots \left(g^{r^{n-1}}\right)^{k_{n-1}}$.
+    \end{itemize}
+    $V$: checks $e\left(g^{A(r)}, g^{B(r)}\right) = e\left(g^{C(r)}, g\right) \cdot e\left(g^{h(r)}, g^{t(r)}\right)$. \\
+    Problem: $g^{A(r)}$ needs to be linear combination of $g^{a_1(r)} \dots g^{a_n(r)}$, also $g^{B(r)}, g^{C(r)}$. \\
+    We need additional values:
+    \begin{itemize}
+      \item $g^{a_1(r) \cdot k_1} \dots g^{a_n(r) \cdot k_1}$, $k_1$ unknown,
+      \item $g^{b_i(r) \cdot k_2} \dots$,
+      \item $g^{c_i(r) \cdot k_3} \dots$,
+      \item $g^{k_1}, g^{k_2}, g^{k_3}$.
+    \end{itemize}
+    Prover also submits:
+    \begin{itemize}
+      \item $g^{k_1 A(r)} = \left(g^{a_1(r) k_1}\right)^{s_1} \dots \left(g^{a_n(r) k_1}\right)^{s_1}$
+      \item $g^{k_2 B(r)} = \dots$
+      \item $g^{k_3 C(r)} = \dots$
+    \end{itemize}
+    Verifier calculates
+    \begin{itemize}
+      \item $e\left(g^{A(r)}, g^{k_1}\right) = e\left(g^{k_1 \cdot A(r)}, g\right)$,
+      \item $e\left(g^{B(r)}, g^{k_2}\right) = \dots$
+    \end{itemize}
+    $\implies$ by crypto assumption $A(r)$ is linear combination of $a_1(r) \dots a_n(r)$. \\
+    Downside: we need $g^{a_1(r)} \dots$
+\end{itemize}
+
+
 %\clearpage
 %\phantomsection
 
