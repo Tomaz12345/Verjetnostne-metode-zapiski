@@ -654,7 +654,7 @@ $X_i = \begin{cases}
   1 \text{ if you hit the area of circle} \\
   0 \text{ else}
 \end{cases}$ \\
-$P_r(X_i = 1) = \frac{\frac{\pi}{2}}{1} = \frac{\pi}{4}$. \\
+$P_r(X_i = 1) = \frac{\frac{\pi}{4}}{1} = \frac{\pi}{4}$. \\
 $E(X_i) = \frac{\pi}{4}$. \\
 $X = \frac{\sum_{i=1}^{n} X_i}{n}$. \\
 $E(X) = \frac{n \cdot E(X_i)}{n} = E(X_i)$.
@@ -673,34 +673,34 @@ $X_i = \begin{cases}
 $v \cdot E\left(\frac{\sum_{i=1}^{n} X_i}{n}\right) = I$.
 
 
-\section{$(\epsilon,\delta)$-approximation}
+\section{$(\varepsilon,\delta)$-approximation}
 
-\begin{defn}[$(\epsilon,\delta)$-approximation]
-  A random algorithm gives a $(\epsilon,\delta)$-approximation for value $v$ if the output $X$ satisfies:
+\begin{defn}[$(\varepsilon,\delta)$-approximation]
+  A random algorithm gives a $(\varepsilon,\delta)$-approximation for value $v$ if the output $X$ satisfies:
   \begin{equation*}
-    P_r(|X-v| \leq \epsilon v) \geq 1 - \delta.
+    P_r(|X-v| \leq \varepsilon v) \geq 1 - \delta.
   \end{equation*}
 \end{defn}
 \begin{theorem}
   Let $X_1 \dots X_n$ be independent and identically distributed indicator variables.
   Let $\mu = E(X_i), \; Y = \frac{\sum_{i=1}^{m} X_i}{m}$.
-  If $m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2 \mu}$, then $P_r(|Y-\mu| \geq \epsilon \mu) \leq \delta$
-  $\implies Y$ is $(\epsilon,\delta)$-approximation for $\mu$.
+  If $m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2 \mu}$, then $P_r(|Y-\mu| \geq \varepsilon \mu) \leq \delta$
+  $\implies Y$ is $(\varepsilon,\delta)$-approximation for $\mu$.
 \end{theorem}
 \begin{pro} \text{} \\
   $X = \sum_{i=1}^{n} X_i$ \\
   $E(X) = m E(x_i) = m \mu$ \\
-  $m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2 \mu}$
+  $m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2 \mu}$
   \begin{align*}
-    P_r(|Y-\mu| \geq \epsilon \mu) &= P_r(\left|\frac{X}{m}-\mu\right| \geq \epsilon \mu) \\
-    &= P_r(\frac{1}{m} \left|X-E(X)\right| \geq \frac{1}{m} \epsilon E(x)) \\
-    &\stackrel{\text{Chernoff}}{\leq} 2 e^{-\frac{\epsilon^2 E(x)}{3}} \\
-    &= 2 e^{-\frac{\epsilon^2 \mu m}{3}} \\
-    &\leq 2 e^{-\frac{\epsilon^2 \mu}{3} \cdot \frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2 \mu}} = \delta.
+    P_r(|Y-\mu| \geq \varepsilon \mu) &= P_r\left(\left|\frac{X}{m}-\mu\right| \geq \varepsilon \mu\right) \\
+    &= P_r\left(\frac{1}{m} \left|X-E(X)\right| \geq \frac{1}{m} \varepsilon E(x)\right) \\
+    &\stackrel{\text{Chernoff}}{\leq} 2 e^{-\frac{\varepsilon^2 E(x)}{3}} \\
+    &= 2 e^{-\frac{\varepsilon^2 \mu m}{3}} \\
+    &\leq 2 e^{-\frac{\varepsilon^2 \mu}{3} \cdot \frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2 \mu}} = \delta.
   \end{align*}
 \end{pro}
 Back to example 1: \\
-$E(Y) = \frac{\pi}{4}, \delta = \frac{1}{1000}$ ($99.9\%$ sure), $\epsilon = \frac{1}{10000}$ \\
+$E(Y) = \frac{\pi}{4}, \delta = \frac{1}{1000}$ ($99.9\%$ sure), $\varepsilon = \frac{1}{10000}$ \\
 $\implies M = \frac{3 \ln\left(\frac{2}{\frac{1}{1000}}\right) 4}{\pi \left(\frac{1}{10000}\right)^2} \approx 29106$. \\
 Problems for MC (Monte-Carlo):
 \begin{itemize}
@@ -726,10 +726,10 @@ Observation: CNF $F$ has a solution $\iff$ DNF $\neg F$ has less than $2^n$ solu
     return \(\frac{x}{m} \cdot 2\sp{n}\)
 \end{alltt}
 $Y = \frac{\sum_{i=1}^{m} X_i}{m}$ \\
-$(\epsilon,\delta)$-approximation for $Y$ \\
+$(\varepsilon,\delta)$-approximation for $Y$ \\
 $E(Y) = \frac{\text{number of solutions of }F}{2^n} = \frac{c(F)}{2^n}$ \\
-$m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2 E(X)} =
-\frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2} \cdot \frac{2^n}{x(F)}$ \\
+$m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2 E(X)} =
+\frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2} \cdot \frac{2^n}{x(F)}$ \\
 $c(F)$ very small $\to$ $m$ exponentially big $\to$ not good (we need a lot of samples).
 \begin{defn} \text{} \\
   $SC_i = \{(a_1 \dots a_n) \in \{0,1\}^n \text{ such that } F = F_1 \lor \dots \lor F_t, \; F_i(a_1 \dots a_n) = 1\}$.
@@ -791,7 +791,7 @@ $f \in \F[x_1 \dots x_n]$ \\
 $deg(f[x_1 \dots x_n]) := deg(f[x \dots x])$.
 \begin{theorem}
   Let $p(x_1 \dots x_n) \in \F[x_1 \dots x_n]$ have the degree $d \geq 0$ and $p \neq 0$.
-  Let $s \subset \F$ be finite.
+  Let $S \subset \F$ be finite.
   If $(r_1 \dots r_n)$ is uniformly at random element from $S^n$.
   Then $P_r(p(r_1 \dots r_n) = 0) \leq \frac{d}{|S|}$.
 \end{theorem}
@@ -814,8 +814,8 @@ $deg(f[x_1 \dots x_n]) := deg(f[x \dots x])$.
   \end{align*}
   because
   \begin{align*}
-    &P_r(p(r_1 \dots r_n = 0) \mid p_j(r_2 \dots r_n) \neq 0) \leq \frac{d-j}{|S|} \\
-    &P_r(p_j(r_2 \dots r_n) \neq 0) \leq \frac{j}{|S|}.
+    &P_r(p_j(r_2 \dots r_n) = 0) \leq \frac{d-j}{|S|} \\
+    &P_r(p(r_1 \dots r_n = 0) \mid p_j(r_2 \dots r_n) \neq 0) \leq \frac{j}{|S|}.
   \end{align*}
 \end{pro}
 \underline{Problem}: \\
@@ -827,7 +827,7 @@ Computing $A \cdot B$:
   \item galactic algorithm: $O\left(n^{2.372\dots}\right)$ - has enormous constants.
 \end{itemize}
 \begin{alltt}
-  RAND_ACB(A,B,C):
+  RAND_ABC(A,B,C):
     for i in range(1,k+1):
       x uniformly at random from \{0,1\}\(\sp{n}\)
       if \(A \cdot (B \cdot x) \neq x\):
@@ -853,8 +853,8 @@ If $A \cdot B \neq C$, then algorithm return false with probability at least $1 
 $|V(g)| = 2n$. \\
 Represent $G$ with $n \times n$ matrix $Z = (Z_{ij})_{i,j=1}^n$ \\
 $Z_{ij} = \begin{cases}
-  &X_{ij} \text{ if } a_i b_j \in E(x) \qquad \text{(X: variable)} \\
-  &0 \text{ else}
+  X_{ij} \text{ if } a_i b_j \in E(x) \qquad \text{(X: variable)} \\
+  0 \text{ else}
 \end{cases}$ \\
 \begin{align*}
   det Z(x_{11} \dots x_{nn}) &= \sum_{\pi \in S_n} sign(\pi) z_{1,\pi(1)} \dots z_{n,\pi(n)} \\
@@ -866,7 +866,7 @@ $det Z \neq 0 \iff G$ has 1-factor. \\
     construct Z with variables x11 ... xnn
     for i in range(1,k+1):
       u <- uniformly at random from  {1,2..2n-1}\(\sp{n\sp{2}}\) (r11 ... rnn)
-      compuze d = det Z(r11 ... rnn)
+      compute d = det Z(r11 ... rnn)
       if d != 0:
         return true
     return false
@@ -891,7 +891,7 @@ $G$ is a random Erdös-Rény graph if it has $n$ vertices and each pair of verti
   $G\left(5, \frac{1}{2}\right)$.
   % skica
 \end{ex}
-$E($ edges in $G$ fron $G(n,p)) = \sum_{1 \leq i < j \leq n} E(X_{ij}) = \binom{n}{2} p$. \\
+$E($edges in $G$ from $G(n,p)) = \sum_{1 \leq i < j \leq n} E(X_{ij}) = \binom{n}{2} p$. \\
 $X_{ij} = \begin{cases}
   1 \text{ if } i \text{ and } j \text{ have edge} \\
   0 \text{ otherwise}
@@ -900,8 +900,8 @@ $p$ can be function of $n$. \\
 $Y_v:$ degree of $v$. \\
 $E(Y_v) = (n-1)p$.
 \begin{defn} \text{} \\
-  We say that a random graph has some property almost surely (A.S.) if
-  $P_r(G \in G(n,p) \text{ has property}) \stackrel{n \to \infty}{\to} 1$.
+  We say that a random graph has some property almost surely (A.S.) if \\
+  $P_r(G \in G(n,p) \text{ has property}) \stackrel{n \longrightarrow \infty}{\to} 1$.
 \end{defn}
 \begin{claim} \text{} \\
   Let $p$ be constant.
@@ -911,13 +911,14 @@ $E(Y_v) = (n-1)p$.
   Let $u,v \in V(G)$ \\
   % skica
   $X_w = \begin{cases}
-    1 \text{ if } uw \in E(G) \text{ in } vw \in E(G)
+    1 \text{ if } uw \in E(G) \text{ in } vw \in E(G) \\
+    0 \text{ else}
   \end{cases}$ \\
   $P_r(X_w = 1) = p^2$ \\
   $P_r(X_w = 0 \text{ for all } w \neq u,v) = \left(1-p^2\right)^{n-2}$. \\
-  $P_r(G \text{ has diameter} > 2)$ \\
+  $P_r(G \text{ has diameter} > 2)$
   $= P_r(X_w = 0$ for all $w \notin u,v $ for some $u,v)$ \\
-  $\leq \binom{n}{2} (1-p^2)^{n-2} \stackrel{n \to \infty}{\to} 0$; \\
+  $\leq \binom{n}{2} (1-p^2)^{n-2} \stackrel{n \to \infty}{\longrightarrow} 0$; \\
   $\binom{n}{2}$ - polynomial, $e^{...}$ - exponent.
 \end{pro}
 $p = f(n)$ \\
@@ -946,7 +947,7 @@ $\frac{1}{n}, \frac{1}{n^3}, \frac{\log n}{n}$
   $E(N_s(v)) = c \cdot n \cdot p, \delta = \omega^{-\frac{1}{3}}$ \\
   \begin{align*}
     P_r(|N_s(v) - cnp| \geq \delta cnp) &\stackrel{\text{Chernoff}}{\leq} 2 e^{-\frac{\omega^{-\frac{2}{3}} cnp}{3}} \\
-    &= 2 e^{-\frac{cnp}{3 \omega(n)^{\frac{2}{3}}}} \stackrel{n \to \infty}{\to} 0.
+    &= 2 e^{-\frac{cnp}{3 \omega(n)^{\frac{2}{3}}}} \stackrel{n \to \infty}{\longrightarrow} 0.
   \end{align*}
   For all $v$: $n \cdot 2 e^{-\frac{cnp}{3 \omega(n)^{\frac{2}{3}}}} \stackrel{n \to \infty}{\to} 0$.
 \end{pro}
@@ -956,7 +957,7 @@ $\frac{1}{n}, \frac{1}{n^3}, \frac{\log n}{n}$
   $|N_0| = 1$ \\
   $|N_i| \leq |N_{i-1}| \cdot n \cdot p \cdot (1+\omega^{-\frac{1}{3}})$: \\
   $|S| \leq n, \; np(1+\omega^{-\frac{1}{3}})$-each element. \\
-  $k = \frac{\log \left(\frac{n}{3}\right)}{\log \left(n \cdot p \cdot \left(1+\omega^{-\frac{1}{3}}\right)\right)} \\
+  $k = \frac{\log \left(\frac{n}{3}\right)}{\log \left(n \cdot p \cdot \left(1+\omega^{-\frac{1}{3}}\right)\right)}
   = \log_{np(1+\omega^{-\frac{1}{3}})} \frac{n}{3} = \Theta\left(\frac{\ln(n)}{\ln(np)}\right)$. \\
   $|N_{\leq k}| = |N_1 \cup \dots \cup N_k|$.
   \begin{align*}
@@ -1029,7 +1030,7 @@ Grow:
   $p_n(k) \cdot \frac{k}{2}: k \to k+1$, \\
   $p_n(k-1) \cdot \frac{k-1}{2}: k-1 \to k$. \\
   For $n$ very big (very close to limit): \\
-  $p_n \cdot (n+1) = p_k \cdot n - p_{k-1} \cdot \frac{k}{2} + p_{k-1} \cdot \frac{k-1}{2}$ \\
+  $p_k \cdot (n+1) = p_k \cdot n - p_{k-1} \cdot \frac{k}{2} + p_{k-1} \cdot \frac{k-1}{2}$ \\
   $\implies p_k = \frac{k-1}{k+2} p_{k-1}$. \\
   For degree $m$: \\
   $(n+1) \cdot p_{n+1}(m) = p_n(m) \cdot n - p_n(m) \cdot \frac{m}{2} + 1$ %??
@@ -1050,8 +1051,9 @@ $\Omega$: finite set (of states).
 \begin{defn}[Markov chain] \text{} \\
   (Discrete time) Markov chain is a sequence of random variables $X = X_0, X_1, X_2 \dots$ with image $\Omega$ and properties:
   \begin{itemize}
-    \item $P(X_{i+1} = x \mid X_i = x_i, X_{i-1} = x_{i-1} \dots X_0 = x_0) =\\ P(X_{i+1} = x \mid X_i = x_i)$,
-    \item $P{X_{i+1} = x \mid X_i = y} = P(X_1 = x \mid X_0 = y)$ - time is homogenous.
+    \item $P(X_{i+1} = x \mid X_i = x_i, X_{i-1} = x_{i-1} \dots X_0 = x_0) =\\ P(X_{i+1} = x \mid X_i = x_i)$
+      - Markov property,
+    \item $P(X_{i+1} = x \mid X_i = y) = P(X_1 = x \mid X_0 = y)$ - time is homogenous.
   \end{itemize}
 \end{defn}
 \begin{ex} \text{} \\
@@ -1075,7 +1077,7 @@ $\Omega$: finite set (of states).
 \end{defn}
 $P$ is stochastic matrix: \\
 $p_{ij} \in [0,1]$ \\
-$\sum_j p_{ij} = 1$. \\
+$\sum_j p_{ij} = 1$ (row sum). \\
 We choose beginning state randomly. \\
 $q(0) = (q_1(0) \dots q_n(0))$ \\
 $P(X_0 = i) = q_i(0)$. \\
@@ -1102,7 +1104,7 @@ $\vdots$ \\
     \item $h_{ij}$: expected number of steps needed to get to state $X_j$ strting in $X_i$ (hitting time),
     \item $N(i, t, q(0))$: expected number of times we visit $x_i$ after $t$ steps starting with distribution $q(0)$,
     \item $\forall f_{ij} > 0 \; \iff$ transition graph is strongly connected $\iff$ we say the chain is irreducible,
-    \item M.C. is aperiodic if there is no $c \in \{2, 3, 4 \dots\}$ such that all lengths of cycled are divisible by $c$.
+    \item M.C. is aperiodic if there is no $c \in \{2, 3, 4 \dots\}$ such that all lengths of cycles are divisible by $c$.
   \end{itemize}
 \end{defn}
 \begin{theorem} \text{} \\
@@ -1163,7 +1165,7 @@ Recall: k-SAT:
   Let $a = (a_1 \dots a_n)$ be a correct solution. \\
   Let $X_i =$ Hamming distance from $b^i$ to $a$. \\
   % skica(i)
-  Goal: bount $h_{n,0}$. \\
+  Goal: bound $h_{n,0}$. \\
   $P(\text{distance of } b^{i+1} \text{ to $a$ is } j-1 \mid \text{distance of $b^i$ to $a$ is } j) \geq \frac{1}{2}$. \\
   $P = \begin{bmatrix}
     0 & 1 & \dots & 0 \\
@@ -1180,7 +1182,7 @@ Recall: k-SAT:
   $h_{i+1,i} \leq 2n$ \\
   $i = 0: \; 2n = h_{0,0} = 1 + h_{1,0} \implies h_{1,0} < 2n$ \\
   $h_{n,0} \leq h_{n,n-1} + \dots + h_{1,0} \leq 2n^2$ \\
-  $E(\text{steps in algorithm to reach corrce solution}) = E(Z) \leq 2n^2$ \\
+  $E(\text{steps in algorithm to reach correct solution}) = E(Z) \leq 2n^2$ \\
   $P(\text{algorithm hasn't reached correct solution after $8n^2$ steps}) \\
   = P(Z > 8n^2) \stackrel{\text{Markov}}{\leq} \frac{E(Z)}{8n^2} \leq \frac{1}{4}$.
 \end{pro}
@@ -1349,7 +1351,8 @@ $h_{s,s} = \frac{1}{\pi_s} \leq \frac{|E|}{deg^{+}(s)}
 \leq \frac{3(|A| - |M|) d + |M| (d-1) + (|A| - |M|) d + |M| (d-1)}{(|A| - |M|) d} \leq \frac{4 |A|}{|A| - |M|}$. \\
 Expected time to find augmenting path $\leq \frac{4 |A|}{|A| - |M|}$. \\
 $|A| = n$ \\
-Expected time to find 1-factor $\leq \frac{4n}{n-1} = 4n \sum_{i=1}^{n-1} \frac{1}{i} \leq 4n (1 + \ln n)$ - in $O(n \log n)$.
+Expected time to find 1-factor $\leq \sum_{i=1}^{n-1} \frac{4n}{n-i} = 4n \sum_{i=1}^{n-1} \frac{1}{i} \leq 4n (1 + \ln n)$ -
+in $O(n \log n)$.
 
 \subsection{Network centrality}
 
@@ -1422,10 +1425,10 @@ Define $DS(S_i)$:
     Next(\(\infty\)) = \(\infty\)
     # end of DS(Si)
     for i in range(1,n+1):
-      Ii = Int(Xi) = (Xj,Xk)
+      Ii = Int(Xi) = (Xj,Xk)  # Ii splits interval (Xj,Xk)
       Ii1 = (Xj,Xi)
       Ii2 = (Xi,Xk)
-      for Xl \(\neq\) Xi, Xi \(\in\) P(I): 
+      for Xl \(\neq\) Xi, Xl \(\in\) P(I): 
         add Xl to P(Ii1) or P(Ii2) depending on Xl < Xi or Xl > Xi
       Next(Xj) = Xi
       Next(Xi) = Xk
@@ -1445,7 +1448,7 @@ if $x_4 = a_4$: \\
 % skica
 if $x_4 = a_2$: \\
 % skica
-$P(X_i = a_j) = \frac{1}{i} \; j \in \{1, 2 \dots i\}$. \\
+$P(X_i = a_j) = \frac{1}{i}, \; j \in \{1, 2 \dots i\}$. \\
 Expected value of steps in iteration $i$ \\
 $\sum_{j=1}^{i} \frac{1}{i} \left(P\left((a_{j-1},a_j)\right) + P\left((a_j,a_{j+1})\right)\right)
 \leq \frac{1}{i} 2 (n-i) \leq \frac{2n}{i}$ \\
@@ -1472,7 +1475,7 @@ Cases:
     % skica
   \item unbounded
     % skica
-  \item .
+  \item multiple solutions.
     % skica
 \end{itemize}
 Alg:
@@ -1521,7 +1524,7 @@ $\leq, \geq$ depending on $c_1, c_2$. \\
 Notation:
 \begin{itemize}[label={}]
   \item $h_i$: halfspace defined by $a_{i1} x + a_{i2} y \leq b_i$,
-  \item $m_i$: added halfspaces,
+  \item $m_i$: added halfspaces, defined by $X, Y \leq M$ or $\geq -M$,
   \item $l_i$: line that bounds.
 \end{itemize}
 Alg:
@@ -1604,10 +1607,10 @@ $h: U \to \{0, 1 \dots n-1\} = M$, \\
 $U$ - universe, \\
 $u = |U|$, \\
 $m = |M|$. \\
-Ideally we would like for $h$ to be as completely rondom: $P(h(x) = t) = \frac{1}{m}$. \\
+Ideally we would like for $h$ to be as completely random: $P(h(x) = t) = \frac{1}{m}$. \\
 Standard application. \\
 Let $V \subset U, \; |V| << |U|$. \\
-We would like to quickly answer if $x \in V$ for ever $x \in V$. \\
+We would like to quickly answer if $x \in V$ for every $x \in U$. \\
 Solution:
 \begin{itemize}
   \item take $h: U \to M$,
@@ -1641,7 +1644,7 @@ Bad example: $H$ = all functions from $U$ to $M$ storing $h \in H$ would take $|
   A family of hash functions to be universal if for \\
   $\forall x, y \in U, x \neq y, h \in H: \; P(h(x) = h(y)) \leq \frac{1}{m}$ (probability of collision).
 \end{defn}
-k-independent if $\forall x_1 \dots x_k \in U$ pairwise different, $\forall t_1 \dots t_k \in M \;
+k-independent if $\forall x_1 \dots x_k \in U$ pairwise different, $\forall t_1 \dots t_k \in M \\
 P_r(h(x_i) = t_i \; \forall i) \leq \frac{1}{m^k}$.
 \begin{ex} \text{} \\
   $U = \{0, 1, 2, 3\}$, \\
@@ -1661,7 +1664,7 @@ $X_{x,y} = \begin{cases}
   1 \text{ if } h(x) = h(y) \\
   0 \text{ else}
 \end{cases}$ \\
-$E(X) = \sum_{x,y \in V, x \neq y} E(X_{x,y}) \leq \binom{n}{2} \cdot \frac{1}{n}$. \\
+$E(X) = \sum_{x,y \in V, x \neq y} E(X_{x,y}) \leq \binom{n}{2} \cdot \frac{1}{m}$. \\
 $U, V, M, H$ \\
 $T[0 \dots m-1]$ \\
 $\forall v \in V$ \\
@@ -1703,7 +1706,7 @@ For $z \in V$, $T[h(z)]$ can happen $\neq z$ if $h$ has collisions in $V$.
   For each $t_x, t_y$ there exists 1 $a, b$ mapping to $t_x, t_y$. \\
   $h_{a,b}(x) = h_{a,b}(y) \; \iff \; t_x = t_y \mod m$. \\
   This holds for $p\left(\lceil\frac{p}{m}\rceil + 1\right)$ \\
-  $p$: choise of $t_y$ \\
+  $p$: choice of $t_y$ \\
   $t_x = t_y + km$ \\
   $P\left(h_{a,b}(x) = h_{a,b}(y)\right) \leq \frac{p\left(\lceil\frac{p}{m}\rceil-1\right)}{p(p-1)}
   \leq \frac{\frac{p-1}{m}}{p-1} = \frac{1}{m}$.
@@ -1737,7 +1740,7 @@ $E(\max_x X_x) \neq \max_x E(X_x) = 1$.
 \begin{pro} \text{} \\
   $\stackrel{?}{\leq} \frac{3 \ln n}{\ln \ln n}$. \\
   Let $X_j$ be the number of balls in bin $j$. \\
-  $P\left(X_j \geq \frac{3 \ln n}{\ln \ln n}\right) = P($ there exists subset $S$ of balls thrown to bin$j)$. \\
+  $P\left(X_j \geq \frac{3 \ln n}{\ln \ln n}\right) = P($there exists subset $S$ of balls thrown to bin $j)$. \\
   $|S| = k$
   \begin{align*}
     &P\left(\cup_{S \text{ balls}, |S|=k} \text{balls from $S$ are thrown to bin }j\right) \\
@@ -1791,7 +1794,7 @@ $\implies$ by repeating sample $h$ we can guarantee
 $P(h_i \text{ has no collisions}) \geq \frac{1}{2}$ (by lemma). \\
 We resample if $h_i$ has collisions. \\
 $E(\text{sampling } h_i) = 2$. \\
-Construction time: \\
+Construction time:
 \begin{itemize}
   \item step 1: $O(n)$
   \item step 2: $O(C_1 + \cdots + C_n) = O(n)$;
@@ -1800,12 +1803,12 @@ together $O(n)$. \\
 Lookup time: $O(1)$ (evaluating $h(x)$ and $h_{h(x)}(x)$). \\
 Space: $O(C_1^2 + \dots + C_n^2)$ in $O(n)$. \\
 By first step $n >$ number of collisions of $h = \sum_{i=1}^{n} \binom{C_i}{2} = \sum_{i=1}^{n} \frac{C_i^2 - C_i}{2}$ \\
-$\implies \sum_{i=1}^{n} C_i^2 < 2n + \sum_{i=1}^{n} c_i = 3n$.
+$\implies \sum_{i=1}^{n} C_i^2 < 2n + \sum_{i=1}^{n} C_i = 3n$.
 
 
 \section{The power of 2 choices}
 
-Variant: placing $n$ balls in $n$ bins but for each ball we choose $d$ balls uniformly at random and
+Variant: placing $n$ balls in $n$ bins but for each ball we choose $d$ bins uniformly at random and
 put the ball in bin with minimal load.
 \begin{theorem}
   The above process with $d \geq 2$ results in at most maximum load of $O\left(\frac{\ln (\ln n)}{\ln d}\right)$.
@@ -1817,13 +1820,13 @@ put the ball in bin with minimal load.
   $X^{i+1}$: number of balls with height $ \geq i+1$. \\
   $X^{i+1} = \sum_{j=1}^{n} X_j^{i+1}$ \\
   $X_j^{i+1}$: indicator variable of $j$-th ball having height $i+1$. \\
-  $E(X^{i+1}) \leq \sum_{j=1}^{n} \left(\frac{b_i}{n}\right)^d = d \cdot \left(\frac{b_i}{n}\right)^d$. \\
+  $E(X^{i+1}) \leq \sum_{j=1}^{n} \left(\frac{b_i}{n}\right)^d = n \cdot \left(\frac{b_i}{n}\right)^d$. \\
   Chernoff bound: with high probability $X^{i+1} \leq 2 n \left(\frac{b_i}{n}\right)^d$. \\
   $X^{i+1} \geq$ number of bins with load at least $i+1$. \\
   Define (set) \\
   $b_{i+1} = \frac{\sum b_i^d}{n^{d-1}}$ \\
   $b_4 = \frac{n}{4}$ \\
-  $b_{i+4} = \frac{n}{2^{2 \cdot d^i - \sum_{j=0}^{i-1} d^j}}$
+  $b_{i+4} \stackrel{?}{=} \frac{n}{2^{2 \cdot d^i - \sum_{j=0}^{i-1} d^j}}$
   \begin{itemize}[label={}]
     \item $i=0$: $b_4 = \frac{n}{2^{2^1}} = \frac{n}{4}$
     \item $i \to i+1$:
@@ -1853,7 +1856,7 @@ Max load in $O(\log (\log n))$.
 
 Idea: use 2 hash functions but allow moving elements later. \\
 We want to have at most 1 element at each entry in the table. \\
-Inserting: \\ % skica
+Inserting: % skica
 \begin{itemize}
   \item if empty: insert,
   \item if not empty: push other element to its other choise, repeat recursively.
@@ -1871,7 +1874,7 @@ If $np < 1 - \epsilon$: all connected components have size at most $O(\log n)$,
 components are trees or at most 1 cycle per component, expected size of a component is $O(1)$. \\
 % skica
 % skica
-Fact: if graph has at msot 1 cycle per component, then inserting can be done and takes at most
+Fact: if graph has at most 1 cycle per component, then inserting can be done and takes at most
 $2 \cdot $(size of component) time (each edge changes direction at most 2 times).
 \begin{theorem} \text{} \\
   Let $n = |U|$, $h_1, h_2: U \to M$, $m = |M| = 2 \cdot (1 + \epsilon) \cdot n$,
@@ -1971,7 +1974,7 @@ We could be interested in
   \item $\vdots$
 \end{itemize}
 We want to use memory in $O(poly(\log n, \log m)) << O(n, n)$. \\
-Most problems cannot be solved precisely, hence we search for $(\epsilon, \delta)$-approximation. \\
+Most problems cannot be solved precisely, hence we search for $(\varepsilon, \delta)$-approximation. \\
 Algorithm $A(G)$:
 \begin{itemize}
   \item initialitazion,
@@ -1985,9 +1988,9 @@ e.g. we can choose stream that \sn{attacks algorithm}).
 \section{Count min sketch}
 
 For a given $i \in [n]$ (token) at the end of stream give $f_i$. \\
-$A(\sigma, \epsilon, \delta)$:
+$A(\sigma, \varepsilon, \delta)$:
 \begin{itemize}[label={}]
-  \item Init: $k = \lceil \frac{2}{\epsilon} \rceil, t = \lceil \log_2 \left(\frac{1}{\delta}\right) \rceil$.
+  \item Init: $k = \lceil \frac{2}{\varepsilon} \rceil, t = \lceil \log_2 \left(\frac{1}{\delta}\right) \rceil$.
   \item We choose $t$ hash functions $h_1 \dots h_t: [n] \to M = [k] = \{1 \dots k\}$ from a universal family $H$.
   \item Let $C[0 \dots t-1][0 \dots k-1]$ be 2-dim (hash) table, $C[i][j] = 0 \; \forall i,j$.
   \item Updates:
@@ -2005,11 +2008,11 @@ $A(\sigma, \epsilon, \delta)$:
 \end{itemize}
 \begin{theorem} \text{} \\
   For every $a \in [n]$ it holds \\
-  $f_a \leq \overline{f_a} \leq f_a + \epsilon m$ \\
+  $f_a \leq \overline{f_a} \leq f_a + \varepsilon m$ \\
   with probability at least $1 - \delta$.
 \end{theorem}
 Notice: space needed $O(t \cdot k \cdot \log m) =
-O\left(\frac{2}{\epsilon} \cdot \log_2 \left(\frac{1}{\delta}\right) \log m\right)$.
+O\left(\frac{2}{\varepsilon} \cdot \log_2 \left(\frac{1}{\delta}\right) \log m\right)$.
 \begin{pro} \text{} \\
   $\forall i \in [t]: C[i][h_i(a)] \geq f_a \implies \overline{f_a} \geq f_a$. \\
   Fix $a$. \\
@@ -2026,10 +2029,10 @@ O\left(\frac{2}{\epsilon} \cdot \log_2 \left(\frac{1}{\delta}\right) \log m\righ
     &\stackrel{**}{\leq} \frac{m}{2}
   \end{align*}
   $*$: hash function from universal family. \\
-  $**: P(X_i \geq \epsilon m) \stackrel{\text{Markov}}{\leq} \frac{\epsilon m}{2 \epsilon m} = \frac{1}{2}$
+  $**: P(X_i \geq \varepsilon m) \stackrel{\text{Markov}}{\leq} \frac{\varepsilon m}{2 \varepsilon m} = \frac{1}{2}$
   for fixed $i$. \\
   \begin{align*}
-    P(\overline{f_a} - f_a \geq \epsilon m) &\leq P(X_i \geq \epsilon m \; \forall i) \\
+    P(\overline{f_a} - f_a \geq \varepsilon m) &\leq P(X_i \geq \varepsilon m \; \forall i) \\
     &\stackrel{\text{indep.}}{=} \left(\frac{1}{2}\right)^t \leq \delta.
   \end{align*}
 \end{pro}
@@ -2120,8 +2123,8 @@ $P\left(\frac{d}{3} < \overline{d} < 3d\right) \geq 1 - \frac{2 \sqrt{3}}{3}$. \
 We use algorithm $k$-times, getting $\overline{d_1} \dots \overline{d_k}$ (we need independent hash functions). \\
 Define: $\overline{d} = median(\overline{d_1} \dots \overline{d_k})$. \\
 \begin{align*}
-  P(\overline{d} \geq 3d) &= P(\text{at least} \lceil \frac{k}{2} \rceil \overline{d}-s \text{ are } \geq 3d) \\
-  &= P(X \geq \frac{k}{2}) \leq e^{-ck};
+  P(\overline{d} \geq 3d) &= P(\text{at least} \left\lceil \frac{k}{2} \right\rceil \overline{d}-s \text{ are } \geq 3d) \\
+  &= P\left(X \geq \frac{k}{2}\right) \leq e^{-ck};
 \end{align*}
 $c$: some constant, \\
 $X = \sum_{i=1}^{k} X_i$, \\
@@ -2146,16 +2149,25 @@ $out(V, x, r, P) = \begin{cases}
   0: \text{ else}
 \end{cases}$. \\
 Goal: minimal communication, minimal work for $V$. \\
-Completeness: \\
-for every $x \in D$ (domain) \\
-$P(out(V, x, r, P) = 1) \geq 1 - \delta_c$ for some $\delta_c \in [0, 1)$. \\
-Soundness: \\
-for every $x$ such that $f(x) \neq y$ \\
-$P(out(V, x, r, P^{'}) = 1) \leq \delta$ for every $P^{'}, \delta_s \in [0, 1)$. \\
-Computational soundness: \\
-soundness, $P^{'}$ computationally bounded. \\
-Zero-knowledge: \\
-informal: verifier learns nothing behind the claim.
+Completeness:
+\begin{itemize}
+  \item for every $x \in D$ (domain)
+  \item $P(out(V, x, r, P) = 1) \geq 1 - \delta_c$ for some $\delta_c \in [0, 1)$.
+\end{itemize}
+Soundness:
+\begin{itemize}
+  \item for every $x$ such that $f(x) \neq y$
+  \item $P(out(V, x, r, P^{'}) = 1) \leq \delta$ for every $P^{'}, \delta_s \in [0, 1)$.
+\end{itemize}
+Computational soundness:
+\begin{itemize}
+  \item soundness,
+  \item $P^{'}$ computationally bounded.
+\end{itemize}
+Zero-knowledge:
+\begin{itemize}
+  \item informal: verifier learns nothing behind the claim.
+\end{itemize}
 \begin{ex} \text{} \\
   Input: $G$ graph, \\
   $f(G) = \begin{cases}
@@ -2181,9 +2193,9 @@ informal: verifier learns nothing behind the claim.
   Input: $(n, y) \in \N^2$, \\
   $f(n, y) = \begin{cases}
     1: \text{ if there exists $x$ such that } y = x^2 (\text{mod } n) \\
-    1: \text{ else}
+    0: \text{ else}
   \end{cases}$; \\
-  qoaroatic reducibility problem. \\
+  qoaroatic?? reducibility problem. \\
   $(n, y) \to P \to V \leftarrow (n, y)$. \\
   $P$: sample $r \in \Z_n$, $s = r^2$, send $s$, \\
   $V$: sample $b \in \{0, 1\}$, send $b$, \\
@@ -2191,14 +2203,15 @@ informal: verifier learns nothing behind the claim.
   $V$: accepts if $m_2^2 = s \cdot y^b$. \\
   Completeness:
   \begin{itemize}[label={}]
-    \item $m_2^2 = s \cdot y^b$
+    \item $m_2^2 \stackrel{?}{=} s \cdot y^b$
     \item if $b = 0:$
     \begin{itemize}[label={}]
-      \item $r^2 = m^2 = s$ \checkmark
+      \item $m_2 = r$
+      \item $r^2 = m_2^2 = s$ \checkmark
     \end{itemize}
     \item if $b = 1:$
     \begin{itemize}[label={}]
-      \item $m^2 = s y$ 
+      \item $m_2^2 = s y$ 
       \item $r^2 x^2 = s y$ \checkmark ($r^2 = s, x^2 = y$)
     \end{itemize}
   \end{itemize}
@@ -2312,7 +2325,7 @@ Application 2:
 
 \section{SNARK}
 
-Succing Non-interactive ARgument of Knowledge. \\
+Succint Non-interactive ARgument of Knowledge. \\
 Succint: proof short and verification fast. \\
 Non-interactive: just sending a proof. \\
 $x \rightarrow P \rightarrow V \leftarrow x$. \\
