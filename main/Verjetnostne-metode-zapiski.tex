@@ -114,6 +114,25 @@ mathescape=true}
 \newcommand{\F}{\mathbb{F}}
 \newcommand{\ch}{\operatorname{char}}
 
+\makeatletter
+\newcommand{\longeq}[1]{\mathrel{\mathpalette\longeq@{#1}}}
+\newcommand{\longeq@}[2]{%
+  \begingroup
+  \sbox\z@{$\m@th#1=$}%
+  \ifdim#2<\wd\z@
+    \resizebox{#2}{\height}{\box\z@}%
+  \else
+    \ifdim#2<3\wd\z@
+      \hbox to #2{$\m@th#1=\hss=\hss=\hss=$}%
+    \else
+      \hbox to #2{$\m@th#1=\cleaders\hbox to 0.2\wd\z@{\hss$#1=$\hss}\hfil=$}%
+    \fi
+  \fi
+  \endgroup
+}
+\makeatother
+
+
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 
@@ -218,13 +237,13 @@ $\begin{pmatrix}
   p_1 & p_2 & \dots
 \end{pmatrix}$
 \begin{ex} \text{}
-  \begin{verbatim}
+  \begin{lstlisting}
     Alg():
       while True:
-        B = sample as random from {0,1}  # 1 with probability p
+        B = sample as random from $\{0,1\}$  # 1 with probability p
         if B = 1:
           return
-  \end{verbatim}
+  \end{lstlisting}
   $\Omega = \{1, 01, 001, 0001 \dots\}$ \\
   $\begin{pmatrix}
     1 & 01 & 001 & 0001 & \dots \\
@@ -236,19 +255,19 @@ $\begin{pmatrix}
 \section{Random variables}
 
 $X: \Omega \to \Z$. \\
-$E[X] = \sum_{c \in \Z} c \cdot P_r(X = c)$ expected value of $X$. \\
+$E[X] = \sum_{c \in \Z} c \cdot P_r(X = c)$: expected value of $X$. \\
 Properties:
 \begin{itemize}[label=$\circ$]
   \item $E[f(X)] = \sum_{c \in \Z} f(c) \cdot P_r(X = c)$,
   \item $E[aX + bY] = aE[X] + bE[Y]$,
   \item $E[X \cdot Y] = E[X] \cdot E[Y]$ if $X, Y$ independent,
-  \item $P_r(X \geq a) \leq \frac{E[X]}{a} \; \forall a > 0 \; X \geq 0$ Markov inequality.
+  \item $P_r(X \geq a) \leq \frac{E[X]}{a}; \; \forall a > 0 \; \forall X \geq 0$ Markov inequality.
 \end{itemize}
 \begin{ex}
   (Continuing from before). \\
   $X =$ number of trials before return. \\
   $X: \Omega \to \Z$. \\
-  $X: 1 \to 1, 01 \to 2, 003 \to 3 \dots$ \\
+  $X: 1 \mapsto 1, 01 \mapsto 2, 003 \mapsto 3 \dots$ \\
   $\begin{pmatrix}
     1 & 2 & 3 & 4 & \dots \\
     p & (1-p)p & (1-p)^2 p & (1-p)^3p & \dots
@@ -260,16 +279,17 @@ Properties:
 \begin{pro}
   $X = \sum_{i=1}^{\infty} X_i$. \\
   $X_i = \begin{cases}
-    1 \text{ if trial $i$ is executed} \\
-    0 \text{ else}
+    1: \text{ if trial $i$ is executed} \\
+    0: \text{ else}
   \end{cases}$ \\
   \begin{align*}
-    E[X] &= E[\sum_{i=1}^{\infty} X_i] = \sum_{i=1}^{\infty} E[X_i] = \\
-    &= \sum_{i=1}^{\infty} (1-p)^{i-1} = \frac{i=0}{\infty} (1-p)^i = \frac{1}{1-(1-p)} = \frac{1}{p}.
+    E[X] &= E\left[\sum_{i=1}^{\infty} X_i\right] = \sum_{i=1}^{\infty} E[X_i] = \\
+    &= \sum_{i=1}^{\infty} (1-p)^{i-1} = \sum_{i=0}^{\infty} (1-p)^i = \frac{1}{1-(1-p)} = \frac{1}{p}.
   \end{align*}
+  \qed
 \end{pro}
 $E[X] = \frac{1}{p}$. \\
-$P_r(X \geq 100 \cdot \frac{1}{p}) \leq \frac{E[X]}{\frac{1}{p}} = \frac{1}{100}$.
+$P_r(X \geq 100 \cdot \frac{1}{p}) \stackrel{\text{Markov}}{\leq} \frac{E[X]}{\frac{1}{p}} = \frac{1}{100}$.
 \begin{defn}
   $H_n = 1 + \frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{n} = \sum_{i=1}^{\infty} \frac{1}{i}$.
 \end{defn}
@@ -282,6 +302,7 @@ $P_r(X \geq 100 \cdot \frac{1}{p}) \leq \frac{E[X]}{\frac{1}{p}} = \frac{1}{100}
     1 + \int_{1}^{n} \frac{dx}{x} = 1 + \Eval{\ln(x)}{1}{n} = 1 + \ln(n).
   \end{equation*}
   % skica
+  \qed
 \end{pro}
 
 
@@ -291,20 +312,20 @@ $P_r(X \geq 100 \cdot \frac{1}{p}) \leq \frac{E[X]}{\frac{1}{p}} = \frac{1}{100}
 
 \section{Quicksort}
 
-\begin{alltt}
-  Input: set (no equal element) (unordered list) S\(\in\R\)
+\begin{lstlisting}
+  Input: set (no equal element) (unordered list) $S \in \R$
       (or whatever you can compare linearly)
   Output: ordered list
   Code:
     def Quicksort(S):
-      if |S|= 0 or 1:
+      if $|S| = 0$ or $|S| = 1$:
         return S
       else:
         a = uniformly at random from S
-        S\(\sp{-}\) = \{b \(\in\) S | b < a\}
-        S\(\sp{+}\) = \{b \(\in\) S | a < b\}
-        return Quicksort(S\(\sp{-}\)), a, Quicksort(S\(\sp{+}\))
-\end{alltt}
+        $S^{-} = \{b \in S \mid b < a\}$
+        $S^{+} = \{b \in S \mid a < b\}$
+        return Quicksort($S^{-}$), a, Quicksort($S^{+}$)
+\end{lstlisting}
 % skica
 $C(n)$ - random variable, the number of comparisons in evaluation of Quicksort with $|S| = n$.
 \begin{theorem}
@@ -326,12 +347,16 @@ $C(n)$ - random variable, the number of comparisons in evaluation of Quicksort w
       \frac{2}{n} \sum_{i=1+\lfloor\frac{n}{2}\rfloor}^{n-1} 5i \log i \leq \\
     &\leq n + \frac{2}{n} \sum_{i=1}^{\lfloor\frac{n}{2}\rfloor} 5i \log \frac{n}{2} +
       \frac{2}{n} \sum_{i=1+\lfloor\frac{n}{2}\rfloor}^{n-1} 5i \log n \leq \\
-    (\log \frac{n}{2} &= \log n - 1) \\
-    &\leq n + \frac{2}{n} \left(\sum_{i=1}^n 5i \log n - \sum_{i=1}^{\frac{n}{2}} 5i\right) = \\
+    &\stackrel{\refeq{eq:logn2}}{\leq} n + \frac{2}{n} \left(\sum_{i=1}^n 5i \log n - \sum_{i=1}^{\frac{n}{2}} 5i\right) = \\
     &= n + \frac{10}{n} \left(\frac{n(n-1)}{2} \log n - \frac{\frac{n}{2} (\frac{n}{2} + 1)}{2}\right) \leq \\
     &\leq n + 5(n-1) \log n - n < \\
     &< 5n \log n.
   \end{align*}
+  \begin{equation}
+    \label{eq:logn2}
+    \log \frac{n}{2} = \log n - 1
+  \end{equation}
+  \qed
 \end{pro}
 $P\left(C(n) \geq b \cdot 5n \log n\right) \stackrel{\text{Markov}}{\leq} \frac{1}{b}$.
 \begin{pro} \text{} \\
@@ -339,8 +364,8 @@ $P\left(C(n) \geq b \cdot 5n \log n\right) \stackrel{\text{Markov}}{\leq} \frac{
   Let $S_1, S_2 \dots S_n$ sorted elements of $S$. \\
   Define random variable
   $X_{ij} = \begin{cases}
-    1 \text{ if $S_i$ and $S_j$ are compared} \\
-    0 \text{ else}
+    1: \text{ if $S_i$ and $S_j$ are compared} \\
+    0: \text{ else}
   \end{cases}$ \\
   $C(n) = \sum_{1 \leq i < j \leq n} E[X_{ij}]$. \\
   $E[X_{ij}] = P(S_i$ and $X_j$ compared$)$. \\
@@ -351,10 +376,11 @@ $P\left(C(n) \geq b \cdot 5n \log n\right) \stackrel{\text{Markov}}{\leq} \frac{
   $S_{ij}$ has everything in between. \\
   \begin{align*}
     \implies E[C(n)] &\leq \sum_{1 \leq i < j \leq n} \frac{2}{j-i+1} = \\
-    &\stackrel{k=j-i+1}{=} \sum_{i=1}^{n-1} \sum_{k=2}^{n-i+1} \frac{2}{k} \leq \\
+    &\stackrel{k=j-i+1}{\longeq{35pt}} \sum_{i=1}^{n-1} \sum_{k=2}^{n-i+1} \frac{2}{k} \leq \\
     &\leq 2 \cdot n \cdot H_n \leq \\
     &\leq 2 n (1 + \log n).
   \end{align*}
+  \qed
 \end{pro}
 
 
@@ -369,29 +395,29 @@ $(U, V(G) \setminus U) = \{uv \in E(G) \mid u \in U, v \in V(G) \setminus U\}$. 
 Problem min-cut: \\
 Input: $G$. \\
 Output: $\min |(U, V(G) \setminus U)|$ - cut size.
-\begin{alltt}
+\begin{lstlisting}
   Algorithm 1:
-    x \(\in\) V(G)
-    Call maxFlow(G, x, y) \(\forall y \in V(G)\)
+    $x \in V(G)$
+    Call maxFlow(G, x, y) $\forall y \in V(G)$
     Take min
-\end{alltt}
-$maxFlow$ is Edmonds-Karp algorithm $O\left(|V| |E|^2\right)$. \\
-\begin{alltt}
+\end{lstlisting}
+$maxFlow$ is Edmonds-Karp algorithm $O\left(|V| |E|^2\right)$.
+\begin{lstlisting}
   Algorithm 2 (Stoer Wagner)
-\end{alltt}
+\end{lstlisting}
 Is $O\left(|E| |V| + |V| log |V|\right)$.
-\begin{alltt}
+\begin{lstlisting}
   Algorithm randMinCut:
-    G\(\sb_{0}\) = G
+    $G_0 = G$
     i = 0
-    while |V(G\(\sb{i}\))| > 2:
-      e\(\sb{i}\) = uniformly at random from G\(\sb{i}\)
-      G\(\sb{i+1}\) = G\(\sb{i}\) / \(\sb{e\sb{i}}\)
-      i = i + 1
-    u, v = V(G\(\sb{n-2}\)) // n = |V(G)|
-    U = \{w \(\in\) V(G) | w is merged into u\}
-    return (U, V(G) \textbackslash U)
-\end{alltt}
+    while $|V(G_i)| > 2$:
+      $e_i$ = uniformly at random from $G_{i}$
+      $G_{i+1} = G_{i}/_{e_{i}}$
+      $i = i + 1$
+    $u, v = V(G_{n-2})$ # $n = |V(G)|$
+    $U = \{w \in V(G) \mid w \text{ is merged into } u\}$
+    return $(U, V(G) \setminus U)$
+\end{lstlisting}
 \begin{theorem}
   Algorithm $randMinCut$ gives you a minimal cut with probability greater or equal to $\frac{2}{n(n-1)}$.
 \end{theorem}
@@ -404,31 +430,31 @@ Is $O\left(|E| |V| + |V| log |V|\right)$.
   Fact 2: $minCut(G) \leq \delta(G)$. \\
   $k := minCut(G)$. \\
   Let $(A,B)$ be an optimal cut. \\
-  $\epsilon_i$ not in $(A,B)$.
+  $\varepsilon_i = e_i$ not in $(A,B)$.
   \begin{align}
-    &P_r(\text{Algorithm not returning } (A,B)) \nonumber \\
-    &= P_r(\epsilon_0 \cap \dots \cap \epsilon_{n-3}) \nonumber  \\
-    &= P_r(\epsilon_0 \cap \dots \cap \epsilon_{n-4}) \cdot
-      P_r(\epsilon_{n-3} \mid \epsilon_0 \cap \dots \cap \epsilon_{n-4}) \nonumber  \\
-    &= P_r(\epsilon_{n-3} \mid \cap_{i=0}^{n-4} \epsilon_i) \cdot
-      P_r(\epsilon_{n-3} \mid \cap_{i=0}^{n-4} \epsilon_i) \nonumber \\
-    &\dots P_r(\epsilon_1 \mid \epsilon_0) \cdot P_r(\epsilon_0). (*) %\label{randMinCut-mid}
+    &P_r(\text{Algorithm returning } (A,B)) \nonumber \\
+    &= P_r(\varepsilon_0 \cap \dots \cap \varepsilon_{n-3}) \quad i = 0 \dots n-3 \nonumber  \\
+    &= P_r(\varepsilon_0 \cap \dots \cap \varepsilon_{n-4}) \cdot
+      P_r(\varepsilon_{n-3} \mid \varepsilon_0 \cap \dots \cap \varepsilon_{n-4}) \nonumber  \\
+    &= P_r(\varepsilon_{n-3} \mid \cap_{i=0}^{n-4} \varepsilon_i) \cdot
+      P_r(\varepsilon_{n-3} \mid \cap_{i=0}^{n-4} \varepsilon_i) \nonumber \\
+    &\text{ } \dots P_r(\varepsilon_1 \mid \varepsilon_0) \cdot P_r(\varepsilon_0) \nonumber \\
+    &\stackrel{\refeq{eq:ei-geq}}{\geq} \frac{n-2}{n} \cdot \frac{n-3}{n-1} \dots \frac{1}{3} = \frac{2}{n(n-1)}. \nonumber
   \end{align}
   \begin{equation*}
-    P_r(\overline{\epsilon_i} \mid \epsilon_{i-1} \cap \dots \cap \epsilon_0) =
+    P_r(\overline{\varepsilon_i} \mid \varepsilon_{i-1} \cap \dots \cap \varepsilon_0) =
       %\frac{k}{|E(G_i)|} \stackrel{\text{\refeq{E-gi}}}{\leq} \frac{k}{\frac{(n-i)k}{2}} = \frac{2}{n-i}
-      \frac{k}{|E(G_i)|} \stackrel{\text{(**)}}{\leq} \frac{k}{\frac{(n-i)k}{2}} = \frac{2}{n-i}
+      \frac{k}{|E(G_i)|} \stackrel{\refeq{eq:E-gi}}{\leq} \frac{k}{\frac{(n-i)k}{2}} = \frac{2}{n-i}
   \end{equation*}
   \begin{equation}
-    |E(G_i)| \geq \frac{(n-i) \delta(G)}{2} \geq \frac{(n-i)k}{2}. (**) % \label(E-gi)
+    \label{eq:E-gi}
+    |E(G_i)| \geq \frac{(n-i) \delta(G)}{2} \geq \frac{(n-i)k}{2}.
   \end{equation}
-  \begin{equation*}
-    P_r(\epsilon_i \mid \epsilon_{i-1} \cap \dots \cap \epsilon_0) \geq 1 - \frac{2}{n-i} = \frac{n-2-i}{n-i}.
-  \end{equation*}
-  \begin{equation*}
-    %\text{\ref{randMinCut-mid}} \geq \frac{n-2}{n} \cdot \frac{n-3}{n-1} \dots \frac{1}{3} = \frac{2}{n(n-1)}.
-    (*) \geq \frac{n-2}{n} \cdot \frac{n-3}{n-1} \dots \frac{1}{3} = \frac{2}{n(n-1)}.
-  \end{equation*}
+  \begin{equation}
+    \label{eq:ei-geq}
+    P_r(\varepsilon_i \mid \varepsilon_{i-1} \cap \dots \cap \varepsilon_0) \geq 1 - \frac{2}{n-i} = \frac{n-2-i}{n-i}.
+  \end{equation}
+  \qed
 \end{pro}
 \begin{theorem}
   Running $randMinCut \; n(n-1)$ times and taking best output gives correct solution with probability $\geq 0.86$.
@@ -437,10 +463,14 @@ Is $O\left(|E| |V| + |V| log |V|\right)$.
   $A_i$ - event that $i$-th run gives sub-optimal solution.
   \begin{align*}
     P_r(\text{solution not correct}) &= P_r(A_1 \cap \dots \cap A_{n(n-1)}) \\
-    &= \prod_{i=1}^{n(n-1)} P_r(A_i) \leq (1 - \frac{2}{n(n-1)})^{n(n-1)} \\
-    &\leq e^{-\frac{2}{n(n-1)} \cdot n(n-1)} = e^{-2} \leq 0.14.
+    &= \prod_{i=1}^{n(n-1)} P_r(A_i) \leq \left(1 - \frac{2}{n(n-1)}\right)^{n(n-1)} \\
+    &\stackrel{\refeq{eq:1-x-leq-e}}{\leq} e^{-\frac{2}{n(n-1)} \cdot n(n-1)} = e^{-2} \leq 0.14.
   \end{align*}
-  $1 - x \leq e^x \; \forall x \in \R$.
+  \begin{equation}
+    \label{eq:1-x-leq-e}
+    1 - x \leq e^x \; \forall x \in \R.
+  \end{equation}
+  \qed
 \end{pro}
 If we run $n(n-1) log(n)$ times $\to O\left(\frac{1}{n}\right)$. \\
 $O\left(n^2 \log n \cdot n\right)$. \\
@@ -459,31 +489,31 @@ Randomized algorithms:
     Monte Carlo algorithms subtypes:
     \begin{itemize}
       \item type(1): $\begin{cases}
-          \text{if } \omega \in \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } \geq \frac{1}{2} \\ 
-          \text{if } \omega \notin \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } = 0 
+          \omega \in \Pi \implies \text{ alg. returns \sn{$\omega \in \Pi$} with probab. } \geq \frac{1}{2} \\ 
+          \omega \notin \Pi \implies \text{ alg. returns \sn{$\omega \in \Pi$} with probab. } = 0 
         \end{cases}$
       \item type(2): $\begin{cases}
-          \text{if } \omega \in \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } = 1 \\ 
-          \text{if } \omega \notin \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } \leq \frac{1}{2} 
+          \omega \in \Pi \implies \text{ alg. returns \sn{$\omega \in \Pi$} with probab. } = 1 \\ 
+          \omega \notin \Pi \implies \text{ alg. returns \sn{$\omega \in \Pi$} with probab. } \leq \frac{1}{2} 
         \end{cases}$
       \item type(3): $\begin{cases}
-          \text{if } \omega \in \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } \geq \frac{3}{4} \\ 
-          \text{if } \omega \notin \Pi \implies \text{ algorithm returns \sn{$\omega \in \Pi$} with probability } \leq \frac{1}{2}
+          \omega \in \Pi \implies \text{ alg. returns \sn{$\omega \in \Pi$} with probab. } \geq \frac{3}{4} \\ 
+          \omega \notin \Pi \implies \text{ alg. returns \sn{$\omega \in \Pi$} with probab. } \leq \frac{1}{2}
         \end{cases}$
     \end{itemize}
     type(1) and type(2): one-sided error, type(3): 2-sided error. \\
     $\frac{1}{2}, \frac{3}{4}$ and $\frac{1}{4}$ arbitrary numbers, can be something different (for type(3) better than coin flip).
 \end{itemize}
 \begin{ex}
-  Decisional problem: does a graph $G$ have $minCut \leq k$? \\
+  Decision problem: does a graph $G$ have $minCut \leq k$? \\
   Run $randMinCut(G) \; n(n-1)$ times.
-  \begin{alltt}
+  \begin{lstlisting}
     Algorithm randMinCut:
-      if one of runs gives |(A,B)| \(\leq\) k:
+      if one of runs gives $|(A,B)| \leq k$:
         return true
       else:
         return false
-  \end{alltt}
+  \end{lstlisting}
 \end{ex}
 Complexity classes:
 \begin{itemize}
@@ -505,8 +535,10 @@ ZPP = RP $\cap$ co-RP.
 
 
 \begin{theorem}
-  Let $X_1, X_2 \dots X_n$ independent random variables with image $\{0, 1\}$. \\
-  Let $p_i = P_r(X_i = x_i), X = \sum_{i=1}^{n} X_i$ and $\mu = E(X) = p_1 + \dots + p_n$. \\
+  Let $X_1, X_2 \dots X_n$ independent random variables with image $\{0, 1\}$. Let \\
+  $p_i = P_r(X_i = x_i), \\
+  X = \sum_{i=1}^{n} X_i$ and \\
+  $\mu = E(X) = p_1 + \dots + p_n$. \\
   For every $\delta \in (0,1)$:
   \begin{align*}
     &P_r(X - \mu \geq \delta \mu) \leq e^{-\frac{\delta^2 \mu}{3}} \\
@@ -524,7 +556,7 @@ Probability falls extremely quickly after $E(X)$.
   \begin{align*}
     P_r(X - \mu \geq \delta \mu) &= P_r(X \geq \mu(1+\delta)) \\
     &\stackrel{t>0}{=} P_r(tX \geq t\mu(1+\delta)) \\
-    &\stackrel{e^y>0}{=} P_r(e^{tX} \geq e^{t\mu(1+\delta)}) \\
+    &\stackrel{e^y>0}{\longeq{10pt}} P_r(e^{tX} \geq e^{t\mu(1+\delta)}) \\
     &\stackrel{\text{Markov}}{\leq} \frac{E\left(e^{tX}\right)}{e^{t\mu(1+\delta)}} \\
     &\stackrel{\refeq{eq:et_x}}{\leq} \frac{e^{(e^t-1)\mu}}{e^{t\mu(1+\delta)}} \\
     &\stackrel{\refeq{eq:leq_in_exp}}{\leq} e^{-\mu \frac{\delta^2}{3}}.
@@ -532,13 +564,13 @@ Probability falls extremely quickly after $E(X)$.
   \begin{align}
     E(e^{tX}) &= E(e^{tX_1 + \dots + tX_n}) \nonumber \\
     &= E(e^{tX_1} \dots e^{tX_n}) \nonumber \\
-    &\stackrel{\text{independent}}{=} \prod_{i=1}^{n} E(e^{tX_i}) \nonumber \\
+    &\stackrel{\text{independent}}{\longeq{25pt}} \prod_{i=1}^{n} E(e^{tX_i}) \nonumber \\
     &\stackrel{\refeq{eq:et_xi}}{\leq} \prod_{i=1}^{n} e^{p_i(e^t-1)} \nonumber \\
     &= e^{(e^t-1) \sum_{i=1}^{n}p_i} \nonumber \\
     &= e^{(e^t-1)\mu} \label{eq:et_x}.
   \end{align}
   \begin{equation}
-    E(e^{tX_i}) = p_i \cdot e^t + (1-p_i) \cdot e^0 = 1+p_i(e^t-1) \stackrel{1+x\leq e^x}{\leq} e^{p_i(e^t-1)}.
+    E(e^{tX_i}) = p_i \cdot e^t + (1-p_i) \cdot e^0 = 1+p_i(e^t-1) \stackrel{\refeq{eq:1-x-leq-e}}{\leq} e^{p_i(e^t-1)}.
     \label{eq:et_xi}
   \end{equation}
   Want:
@@ -557,7 +589,7 @@ Probability falls extremely quickly after $E(X)$.
   \begin{align*}
     P_r(\mu - X \leq \delta \mu) &= P_r(X \geq \mu(1-\delta)) \\
     &\stackrel{t>0}{=} P_r(tX \geq t\mu(1-\delta)) \\
-    &\stackrel{e^y>0}{=} P_r(e^{tX} \geq e^{t\mu(1-\delta)}) \\
+    &\stackrel{e^y>0}{\longeq{15pt}} P_r(e^{tX} \geq e^{t\mu(1-\delta)}) \\
     &\leq \dots \leq \frac{e^{(e^t-1)\mu}}{e^{t\mu(1-\delta)}}.
   \end{align*}
   Want: $e^t - 1 - t(1-\delta) \leq -\frac{\delta^2}{2} \; \forall \delta \in (0,1)$:
@@ -576,15 +608,17 @@ $X_i \sim \begin{pmatrix}0 & 1 \\ \frac{1}{2} & \frac{1}{2}\end{pmatrix}$ \\
 $X = \sum_{i=1}^{n} X_i$ \\
 $\mu = \frac{n}{2}$
 \begin{align*}
-  P_r(|X-\mu| \geq \sqrt{\frac{3}{2}n \ln(n)}) &= P_r(|X-\mu| \geq \frac{n}{2} \sqrt{\frac{6}{n} \ln(n)}) \\
-  &\quad \mu = \frac{n}{2}, \delta = \sqrt{\frac{6}{n} \ln(n)}, \\
-  &\quad \text{for \sn{big} }n \delta \in (0,1) \\
-  &\stackrel{\text{Chernoff}}{\leq} 2 e^{-\frac{\frac{n}{2} \frac{6}{n} \ln(n)}{3}} = \frac{2}{n}.
+  P_r\left(|X-\mu| \geq \sqrt{\frac{3}{2}n \ln(n)}\right)
+  &= P_r\left(|X-\mu| \geq \frac{n}{2} \sqrt{\frac{6}{n} \ln(n)}\right) \\
+  &\stackrel{\text{Chernoff}}{\leq} 2 e^{-\frac{\frac{n}{2} \frac{6}{n} \ln(n)}{3}} = \frac{2}{n};
 \end{align*}
+For \sn{big} $n$ is $\delta \in (0,1)$, \\
+$\mu = \frac{n}{2}, \delta = \sqrt{\frac{6}{n} \ln(n)}$. \\
 $d = \sqrt{\frac{3}{2}n \ln(n)}$
 % skica
 \begin{equation*}
-  \implies P_r(X \in (\mu - \sqrt{\frac{3}{2}n \ln(n)}, \mu + \sqrt{\frac{3}{2}n \ln(n)})) \geq 1 - \frac{2}{n}.
+  \implies P_r\left(X \in \left(\mu - \sqrt{\frac{3}{2}n \ln(n)}, \mu + \sqrt{\frac{3}{2}n \ln(n)}\right)\right)
+  \geq 1 - \frac{2}{n}.
 \end{equation*}
 % skica
 \begin{claim} \text{} \\
@@ -595,12 +629,15 @@ $d = \sqrt{\frac{3}{2}n \ln(n)}$
 \end{claim}
 \begin{pro}
   \begin{align*}
-    P_r(X \leq m) &= P_r(\frac{cm}{2} - X \geq \frac{cm}{2} - m) \\
-    &= P_r(\frac{cm}{2} - X \geq \frac{cm}{2} (1 - \frac{2}{c})) \\
-    &\stackrel{\text{Chernoff}}{\leq} e^{-\frac{\frac{cm}{2} (1-\frac{2}{c})^2}{2}} \\
-    &\quad 1-\frac{2}{c} \geq \frac{1}{2} \text{ if } c \geq 4 \\
-    &\leq e^{-\frac{\frac{cm}{2} \frac{1}{4}}{2}} = e^{-\frac{cm}{16}}.
+    P_r(X \leq m) &= P_r\left(\frac{cm}{2} - X \geq \frac{cm}{2} - m\right) \\
+    &= P_r\left(\frac{cm}{2} - X \geq \frac{cm}{2} \left(1 - \frac{2}{c}\right)\right) \\
+    &\stackrel{\text{Chernoff}}{\leq} e^{-\frac{\frac{cm}{2} \left(1-\frac{2}{c}\right)^2}{2}} \\
+    &\stackrel{\refeq{eq:1-2c}}{\leq} e^{-\frac{\frac{cm}{2} \frac{1}{4}}{2}} = e^{-\frac{cm}{16}}.
   \end{align*}
+  \begin{equation}
+    \label{eq:1-2c}
+    \quad 1-\frac{2}{c} \geq \frac{1}{2} \text{ if } c \geq 4
+  \end{equation}
   \qed
 \end{pro}
 Back to Quicksort.
@@ -614,30 +651,34 @@ Back to Quicksort.
   Define: iteration $i$ is successful if $|S_{i+1}| \leq \frac{3}{4} |S_i|$ ($\frac{1}{2}$ is too strict).
   \begin{equation*}
     X_i = \begin{cases}
-      1 \text{ if iteration } i \text{ is successful} \\
-      0 \text{ else}
+      1: \text{ if iteration } i \text{ is successful} \\
+      0: \text{ else}
     \end{cases}
   \end{equation*}
   % skica (i)
   $P_r(X_i = 1) \geq \frac{1}{2}$ \\
   $S_i: n \to \frac{3}{4} n \to (\frac{3}{4})^2 n \to \dots \to 1$. \\
-  Notice: max number of iteration is $\log_{\frac{4}{3}}(n) = \frac{\ln(n)}{\ln(4)-\ln(3)}$. \\
+  Notice: max number of iterations is $\log_{\frac{4}{3}}(n) = \frac{\ln(n)}{\ln(4)-\ln(3)}$. \\
   Probability that we haven't succeeded in $\log_{\frac{4}{3}}(n)$ steps:
   \begin{align}
-    P_r(\sum_{i=1}^{c \log_{\frac{4}{3}}(n)} X_i < \log_{\frac{4}{3}}(n)) &\leq
-      P_r(\sum_{i=1}^{c \log_{\frac{4}{3}}(n)} Y_i < \log_{\frac{4}{3}}(n)) \label{eq:X_to_Y} \\
-    &\stackrel{\text{Chernoff}}{<} e^{-\frac{c \log_{\frac{4}{3}}(n)}{24}} \\
-    &= e^{-\frac{c \ln(n) \log_{\frac{4}{3}}(e)}{24}} \\
-    &= \frac{1}{n} \frac{c \log_{\frac{4}{3}}(e)}{24} \\
-    &\quad \log_{\frac{4}{3}}(e) \approx 3.4, \; c=14 \\
-    &\leq \left(\frac{1}{n}\right)^2
+    P_r\left(\sum_{i=1}^{c \log_{\frac{4}{3}}(n)} X_i < \log_{\frac{4}{3}}(n)\right) &\leq
+      P_r\left(\sum_{i=1}^{c \log_{\frac{4}{3}}(n)} Y_i < \log_{\frac{4}{3}}(n)\right) \label{eq:X_to_Y} \\
+    &\stackrel{\text{Chernoff}}{<} e^{-\frac{c \log_{\frac{4}{3}}(n)}{24}} \nonumber \\
+    &= e^{-\frac{c \ln(n) \log_{\frac{4}{3}}(e)}{24}} \nonumber\\
+    &= \frac{1}{n} \frac{c \log_{\frac{4}{3}}(e)}{24} \nonumber \\
+    &\stackrel{\refeq{eq:log-c}}{\leq} \left(\frac{1}{n}\right)^2. \nonumber
   \end{align}
   \refeq{eq:X_to_Y} because $X_i$ not independent,
-  $Y_i \sim \begin{pmatrix}0 & 1 \\ \frac{1}{2} & \frac{1}{2}\end{pmatrix}$ independent. \\
+  $Y_i \sim \begin{pmatrix}0 & 1 \\ \frac{1}{2} & \frac{1}{2}\end{pmatrix}$ independent,
+  \begin{equation}
+    \label{eq:log-c}
+    \log_{\frac{4}{3}}(e) \approx 3.4, \; c=14.
+  \end{equation}
   $P_r(t_s \geq c \log_{\frac{4}{3}}(n)) \geq \left(\frac{1}{n}\right)^2$ for one $s$. \\
   $c=14 \implies$ at least $48 \ln(n)$ iterations with probability $\leq \left(\frac{1}{n}\right)^2$. \\
   With probability as least $1-\frac{1}{n}$ for all $s \in S$ it holds that $s$ has $\leq 48 \ln(n)$ comparisons with a pivot. \\
-  $\implies$ total number of comparisons $n \cdot 48 \ln(n)$ with probability as least $1 - \frac{1}{n}$.
+  $\implies$ total number of comparisons $n \cdot 48 \ln(n)$ with probability at least \\
+  $1 - \frac{1}{n}$.
   \qed
 \end{pro}
 
@@ -651,8 +692,8 @@ Back to Quicksort.
 % skica
 Area of circle $= \frac{\pi}{4}$. \\
 $X_i = \begin{cases}
-  1 \text{ if you hit the area of circle} \\
-  0 \text{ else}
+  1: \text{ if you hit the area of circle} \\
+  0: \text{ else}
 \end{cases}$ \\
 $P_r(X_i = 1) = \frac{\frac{\pi}{4}}{1} = \frac{\pi}{4}$. \\
 $E(X_i) = \frac{\pi}{4}$. \\
@@ -667,8 +708,8 @@ $E(X) = \frac{n \cdot E(X_i)}{n} = E(X_i)$.
 $I = \int_{\Omega} f(x) dx$ - volume. \\
 % skica
 $X_i = \begin{cases}
-  1 \; F(x_i,y_i) \leq z_i \\
-  0 \text{ otherwise}
+  1: \; F(x_i,y_i) \leq z_i \\
+  0: \text{ otherwise}
 \end{cases}$ \\
 $v \cdot E\left(\frac{\sum_{i=1}^{n} X_i}{n}\right) = I$.
 
@@ -676,15 +717,17 @@ $v \cdot E\left(\frac{\sum_{i=1}^{n} X_i}{n}\right) = I$.
 \section{$(\varepsilon,\delta)$-approximation}
 
 \begin{defn}[$(\varepsilon,\delta)$-approximation]
-  A random algorithm gives a $(\varepsilon,\delta)$-approximation for value $v$ if the output $X$ satisfies:
+  A random algorithm gives a \\
+  $(\varepsilon,\delta)$-approximation for value $v$ if the output $X$ satisfies:
   \begin{equation*}
-    P_r(|X-v| \leq \varepsilon v) \geq 1 - \delta.
+    P_r\left(|X-v| \leq \varepsilon v\right) \geq 1 - \delta.
   \end{equation*}
 \end{defn}
 \begin{theorem}
   Let $X_1 \dots X_n$ be independent and identically distributed indicator variables.
   Let $\mu = E(X_i), \; Y = \frac{\sum_{i=1}^{m} X_i}{m}$.
-  If $m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2 \mu}$, then $P_r(|Y-\mu| \geq \varepsilon \mu) \leq \delta$
+  If $m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2 \mu}$, then
+  $P_r\left(|Y-\mu| \geq \varepsilon \mu\right) \leq \delta$
   $\implies Y$ is $(\varepsilon,\delta)$-approximation for $\mu$.
 \end{theorem}
 \begin{pro} \text{} \\
@@ -692,12 +735,13 @@ $v \cdot E\left(\frac{\sum_{i=1}^{n} X_i}{n}\right) = I$.
   $E(X) = m E(x_i) = m \mu$ \\
   $m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2 \mu}$
   \begin{align*}
-    P_r(|Y-\mu| \geq \varepsilon \mu) &= P_r\left(\left|\frac{X}{m}-\mu\right| \geq \varepsilon \mu\right) \\
+    P_r\left(|Y-\mu| \geq \varepsilon \mu\right) &= P_r\left(\left|\frac{X}{m}-\mu\right| \geq \varepsilon \mu\right) \\
     &= P_r\left(\frac{1}{m} \left|X-E(X)\right| \geq \frac{1}{m} \varepsilon E(x)\right) \\
     &\stackrel{\text{Chernoff}}{\leq} 2 e^{-\frac{\varepsilon^2 E(x)}{3}} \\
     &= 2 e^{-\frac{\varepsilon^2 \mu m}{3}} \\
     &\leq 2 e^{-\frac{\varepsilon^2 \mu}{3} \cdot \frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2 \mu}} = \delta.
   \end{align*}
+  \qed
 \end{pro}
 Back to example 1: \\
 $E(Y) = \frac{\pi}{4}, \delta = \frac{1}{1000}$ ($99.9\%$ sure), $\varepsilon = \frac{1}{10000}$ \\
@@ -716,20 +760,20 @@ DNF: $(\overline{X_{i_1}} \land X_{i_2} \lor \overline{X_{i_4}}) \lor \dots$
 - easy to determine if solution exists. \\
 Question: number of solutions to a given DNF? \\
 Observation: CNF $F$ has a solution $\iff$ DNF $\neg F$ has less than $2^n$ solutions, $n$ is number of samples.
-\begin{alltt}
+\begin{lstlisting}
   ALG_1(F):
-    x = 0
-    for i in range(1,m+1):
-      \(x_1 \dots x_n\) uniformly random from \{0,1\}\(\sp{n}\)
-      if \(F(x_1 \dots x_n)\) = 1:
-        x += 1
-    return \(\frac{x}{m} \cdot 2\sp{n}\)
-\end{alltt}
+    $x = 0$
+    for $i$ in range(1,$m+1$):
+      $x_1 \dots x_n$ uniformly random from $\{0,1\}^n$
+      if $F(x_1 \dots x_n) = 1$:
+        $x += 1$
+    return $\frac{x}{m} \cdot 2^n$
+\end{lstlisting}
 $Y = \frac{\sum_{i=1}^{m} X_i}{m}$ \\
-$(\varepsilon,\delta)$-approximation for $Y$ \\
+$(\varepsilon,\delta)$-approximation for $Y$. \\
 $E(Y) = \frac{\text{number of solutions of }F}{2^n} = \frac{c(F)}{2^n}$ \\
 $m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2 E(X)} =
-\frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2} \cdot \frac{2^n}{x(F)}$ \\
+\frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2} \cdot \frac{2^n}{c(F)}$ \\
 $c(F)$ very small $\to$ $m$ exponentially big $\to$ not good (we need a lot of samples).
 \begin{defn} \text{} \\
   $SC_i = \{(a_1 \dots a_n) \in \{0,1\}^n \text{ such that } F = F_1 \lor \dots \lor F_t, \; F_i(a_1 \dots a_n) = 1\}$.
@@ -740,36 +784,44 @@ $U = \{(i,a) \mid i \in \{1,2 \dots t\}, a \in SC_i\}$ \\
 $U = \sum_{i=1}^{t} |SC_i|$ - $O(tn)$ (space smaller than $\{0,1\}^n$) \\
 $S = \{(i,a) \in U \mid a \in SC_i, \; a \not \in SC_j \; 1 \leq j < i\}$ \\
 $|S| = |SC_1| + \dots + |SC_t| = c(F)$.
-\begin{alltt}
+\begin{lstlisting}
   ALG_2(F):
-    x = 0
-    for i in range(1,m+1):
-      (i, a) uniformly random from U (**)
-      if (i, a) \(\in\) S: (*)
-        x += 1
-    return \(\frac{x}{m} \cdot |U|\)
-\end{alltt}
-$(*) \; a \in SC_i \to O(n), \; a \notin SC_j \; j = 1 \dots i-1 \to O(tn) \; \implies \; O(tn), m$ times. \\
-$(**)$: watch for details on how to, e.g. $x_2, x_2 \land x_3$: $x_2$ is more probable than $x_2 \land x_3 \to O(1)$.
+    $x = 0$
+    for i in range(1,$m+1$):
+      $(i, a)$ uniformly random from U $\refeq{details}$
+      if $(i, a) \in S$: $\refeq{eq:sci}$
+        $x += 1$
+    return $\frac{x}{m} \cdot |U|$
+\end{lstlisting}
+\begin{align}
+  &a \in SC_i \to O(n), \; a \notin SC_j \; j = 1 \dots i-1 \to O(tn) \label{eq:sci} \\
+  &\implies \; O(tn), m \text{ times}. \nonumber
+\end{align}
+\begin{align}
+  &\text{watch for details on how to, e.g. } x_2, x_2 \land x_3 \label{details} \\
+  &x_2 \text{ is more probable than } x_2 \land x_3 \to O(1). \nonumber
+\end{align}
 \begin{theorem}
-  For $m = \lceil\frac{3t \ln(\left(\frac{2}{\delta}\right))}{\epsilon^2}\rceil$ algorithm returns $(\epsilon,\delta)$-approximation
-  in $O\left(\frac{t^n n \ln\left(\frac{2}{\delta}\right)}{\epsilon^2}\right)$ time.
+  For $m = \left\lceil\frac{3t \ln(\left(\frac{2}{\delta}\right))}{\varepsilon^2}\right\rceil$
+  algorithm returns $(\varepsilon,\delta)$-approximation
+  in $O\left(\frac{t^n n \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2}\right)$ time.
 \end{theorem} 
-\begin{pro}
+\begin{pro} \text{} \\
   $O(t \cdot n \cdot m)$. \\
   Insert $m = ...$
+  \qed
 \end{pro}
 Prove
 \begin{equation*}
-  P_r(Y|U| - c(F) > \epsilon c(F)) < \delta:
+  P_r(Y|U| - c(F) > \varepsilon c(F)) < \delta:
 \end{equation*}
 $c(F) = |S|, E(Y) = \frac{|S|}{|U|}$
 \begin{align*}
-  P_r(Y|U| - c(F) > \epsilon c(F)) &= P_r(|U|(Y - E(Y)) > \epsilon |U| E(Y)) \leq \delta
+  P_r(Y|U| - c(F) > \varepsilon c(F)) &= P_r(|U|(Y - E(Y)) > \varepsilon |U| E(Y)) \leq \delta
 \end{align*}
 if
 \begin{equation*}
-  m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\epsilon^2 E(Y)} \geq \frac{3 \ln\left(\frac{2}{\delta}\right)t}{\epsilon^2}
+  m \geq \frac{3 \ln\left(\frac{2}{\delta}\right)}{\varepsilon^2 E(Y)} \geq \frac{3 \ln\left(\frac{2}{\delta}\right)t}{\varepsilon^2}
 \end{equation*}
 where
 \begin{equation*}
@@ -810,13 +862,15 @@ $deg(f[x_1 \dots x_n]) := deg(f[x \dots x])$.
     &j \leq d \\
     P_r(p(r_1 \dots r_n) = 0) &= P_r(p(r_1 \dots r_n = 0) \mid p_j(r_2 \dots r_n) = 0) \cdot P_r(p_j(r_2 \dots r_n) = 0) \\
     &+ P_r(p(r_1 \dots r_n = 0) \mid p_j(r_2 \dots r_n) \neq 0) \cdot P_r(p_j(r_2 \dots r_n) \neq 0) \\
-    &\leq 1 \cdot \frac{d-j}{|S|} + \frac{j}{|S|} \cdot 1, \\
+    &\leq 1 \cdot \frac{d-j}{|S|} + \frac{j}{|S|} \cdot 1 \\
+    &= \frac{d}{|S|}, \\
   \end{align*}
   because
   \begin{align*}
     &P_r(p_j(r_2 \dots r_n) = 0) \leq \frac{d-j}{|S|} \\
     &P_r(p(r_1 \dots r_n = 0) \mid p_j(r_2 \dots r_n) \neq 0) \leq \frac{j}{|S|}.
   \end{align*}
+  \qed
 \end{pro}
 \underline{Problem}: \\
 Let $A,B,C \in \F^{n \times n}$, is $A \cdot B = C$? \\
@@ -826,14 +880,14 @@ Computing $A \cdot B$:
   \item Strassen algorithm: $O\left(n^{2,807\dots}\right)$,
   \item galactic algorithm: $O\left(n^{2.372\dots}\right)$ - has enormous constants.
 \end{itemize}
-\begin{alltt}
+\begin{lstlisting}
   RAND_ABC(A,B,C):
-    for i in range(1,k+1):
-      x uniformly at random from \{0,1\}\(\sp{n}\)
-      if \(A \cdot (B \cdot x) \neq x\):
+    for $i$ in range(1,$k+1$):
+      $x$ uniformly at random from $\{0,1\}^{n}$
+      if $A \cdot (B \cdot x) \neq x$:
         return false
     return true
-\end{alltt}
+\end{lstlisting}
 $O\left(k n^2\right)$. \\
 
 
@@ -843,9 +897,9 @@ If $A \cdot B = C$, algorithm returns true. \\
 If $A \cdot B \neq C$: \\
 \begin{align*}
   P_r(ABx = Cx) &= P_r((AB-C)x = 0) \\
-  &= P_r(||(AB-C)x||^2 = 0) \stackrel{\text{Poly}}{\leq} \frac{2}{3}.
+  &= P_r\left(||(AB-C)x||^2 = 0\right) \stackrel{\text{Poly}}{\leq} \frac{2}{3}.
 \end{align*}
-$||(AB_C)x||^2$ - polynomial in $x_1 \dots x_n$ of degree $2$. \\
+$||(AB-C)x||^2$ - polynomial in $x_1 \dots x_n$ of degree $2$. \\
 If $A \cdot B \neq C$, then algorithm return false with probability at least $1 - \left(\frac{2}{3}\right)^k$. \\
 \underline{Problem}: \\
 1-factor in bipartite graphs. \\
@@ -853,29 +907,30 @@ If $A \cdot B \neq C$, then algorithm return false with probability at least $1 
 $|V(g)| = 2n$. \\
 Represent $G$ with $n \times n$ matrix $Z = (Z_{ij})_{i,j=1}^n$ \\
 $Z_{ij} = \begin{cases}
-  X_{ij} \text{ if } a_i b_j \in E(x) \qquad \text{(X: variable)} \\
-  0 \text{ else}
+  X_{ij}: &\text{ if } a_i b_j \in E(x) \qquad \text{(X: variable)} \\
+  0: &\text{ else}
 \end{cases}$ \\
 \begin{align*}
   det Z(x_{11} \dots x_{nn}) &= \sum_{\pi \in S_n} sign(\pi) z_{1,\pi(1)} \dots z_{n,\pi(n)} \\
   &= \sum_{\pi \in S_n, \pi \text{ defines 1-factor}} sign(\pi) x_{1,\pi(1)} \dots x_{n,\pi(n)}.
 \end{align*}
-$det Z \neq 0 \iff G$ has 1-factor. \\
-\begin{alltt}
+$det Z \neq 0 \iff G$ has 1-factor.
+\begin{lstlisting}
   Rand_1factor(G):
-    construct Z with variables x11 ... xnn
-    for i in range(1,k+1):
-      u <- uniformly at random from  {1,2..2n-1}\(\sp{n\sp{2}}\) (r11 ... rnn)
-      compute d = det Z(r11 ... rnn)
-      if d != 0:
+    construct Z with variables $x_{11} \dots x_{nn}$
+    for $i$ in range(1,$k+1$):
+      $u$ <- uniformly at random from  $\{1,2..2n-1\}^{n^2}$ (r_{11} ... r_{nn}?)
+      compute $d = det Z(r_{11} ... r_{nn})$
+      if $d \neq 0$:
         return true
     return false
-\end{alltt}
+\end{lstlisting}
 Complexity: $k \cdot$ computing determinant: $O\left(n^3\right)$ (Gaussian elimination). \\
 or apply approximation algorithm:
 \begin{itemize}
   \item if $G$ has no 1-factor it always returns false,
-  \item if $G$ has 1-factor, it returns true with probability at least $1-\left(\frac{n}{2n}\right)^k = 1 - \left(\frac{1}{2}\right)^k$
+  \item if $G$ has 1-factor, it returns true with probability at least \\
+    $1-\left(\frac{n}{2n}\right)^k = 1 - \left(\frac{1}{2}\right)^k$
     ($k$ konstant, larger set $\implies$ smaller $k$ needed).
 \end{itemize}
 
@@ -893,15 +948,15 @@ $G$ is a random Erdös-Rény graph if it has $n$ vertices and each pair of verti
 \end{ex}
 $E($edges in $G$ from $G(n,p)) = \sum_{1 \leq i < j \leq n} E(X_{ij}) = \binom{n}{2} p$. \\
 $X_{ij} = \begin{cases}
-  1 \text{ if } i \text{ and } j \text{ have edge} \\
-  0 \text{ otherwise}
+  1: \text{ if } i \text{ and } j \text{ have edge} \\
+  0: \text{ otherwise}
 \end{cases}$ \\
 $p$ can be function of $n$. \\
 $Y_v:$ degree of $v$. \\
 $E(Y_v) = (n-1)p$.
 \begin{defn} \text{} \\
   We say that a random graph has some property almost surely (A.S.) if \\
-  $P_r(G \in G(n,p) \text{ has property}) \stackrel{n \longrightarrow \infty}{\to} 1$.
+  $P_r(G \in G(n,p) \text{ has property}) \stackrel{n \to \infty}{\longrightarrow} 1$.
 \end{defn}
 \begin{claim} \text{} \\
   Let $p$ be constant.
@@ -911,26 +966,28 @@ $E(Y_v) = (n-1)p$.
   Let $u,v \in V(G)$ \\
   % skica
   $X_w = \begin{cases}
-    1 \text{ if } uw \in E(G) \text{ in } vw \in E(G) \\
-    0 \text{ else}
+    1: \text{ if } uw \in E(G) \text{ in } vw \in E(G) \\
+    0: \text{ else}
   \end{cases}$ \\
   $P_r(X_w = 1) = p^2$ \\
   $P_r(X_w = 0 \text{ for all } w \neq u,v) = \left(1-p^2\right)^{n-2}$. \\
-  $P_r(G \text{ has diameter} > 2)$
-  $= P_r(X_w = 0$ for all $w \notin u,v $ for some $u,v)$ \\
-  $\leq \binom{n}{2} (1-p^2)^{n-2} \stackrel{n \to \infty}{\longrightarrow} 0$; \\
-  $\binom{n}{2}$ - polynomial, $e^{...}$ - exponent.
+  \begin{align*}
+    P_r(G \text{ has diameter} > 2) &= P_r(X_w = 0 \text{ for all } w \notin u,v  \text{ for some } u,v) \\
+    &\leq \binom{n}{2} (1-p^2)^{n-2} \stackrel{n \to \infty}{\longrightarrow} 0
+  \end{align*}
+  $\binom{n}{2}$ - polynomial, $e^{\dots}$ - exponent.
+  \qed
 \end{pro}
 $p = f(n)$ \\
 $\frac{1}{n}, \frac{1}{n^3}, \frac{\log n}{n}$
 \begin{theorem} (without proof) \\
-  Let $p$ be a function of $n$: let $G \in G(n,p)$:
+  Let $p$ be a function of $n$, let $G \in G(n,p)$:
   \begin{itemize}
-    \item $np < 1$ - $G$ A.S. disconnected with connected components of size $O(\log n)$
-    \item $np = 1$ - $G$ A.S. has $1$ large component of size $O\left(n^{\frac{2}{3}}\right)$
-    \item $np = c > 1$ - $G$ A.S. has giant component of size $dn, \; d \in (0,1)$
-    \item $np \leq (1-\epsilon) \ln n$ - $G$ A.S. disconnected with isolated vertices
-    \item $np > (1-\epsilon) \ln n$ - $G$ A.S. connected.
+    \item $np < 1 \implies G$ A.S. disconnected with connected components of size $O(\log n)$,
+    \item $np = 1 \implies G$ A.S. has $1$ large component of size $O\left(n^{\frac{2}{3}}\right)$,
+    \item $np = c > 1 \implies G$ A.S. has giant component of size $dn, \; d \in (0,1)$,
+    \item $np \leq (1-\varepsilon) \ln n \implies G$ A.S. disconnected with isolated vertices,
+    \item $np > (1-\varepsilon) \ln n \implies G$ A.S. connected.
   \end{itemize}
 \end{theorem}
 \begin{theorem} \text{} \\
@@ -949,7 +1006,8 @@ $\frac{1}{n}, \frac{1}{n^3}, \frac{\log n}{n}$
     P_r(|N_s(v) - cnp| \geq \delta cnp) &\stackrel{\text{Chernoff}}{\leq} 2 e^{-\frac{\omega^{-\frac{2}{3}} cnp}{3}} \\
     &= 2 e^{-\frac{cnp}{3 \omega(n)^{\frac{2}{3}}}} \stackrel{n \to \infty}{\longrightarrow} 0.
   \end{align*}
-  For all $v$: $n \cdot 2 e^{-\frac{cnp}{3 \omega(n)^{\frac{2}{3}}}} \stackrel{n \to \infty}{\to} 0$.
+  For all $v$: $n \cdot 2 e^{-\frac{cnp}{3 \omega(n)^{\frac{2}{3}}}} \stackrel{n \to \infty}{\longrightarrow} 0$.
+  \qed
 \end{pro}
 \begin{pro}(Theorem): \\
   % skica
@@ -957,7 +1015,8 @@ $\frac{1}{n}, \frac{1}{n^3}, \frac{\log n}{n}$
   $|N_0| = 1$ \\
   $|N_i| \leq |N_{i-1}| \cdot n \cdot p \cdot (1+\omega^{-\frac{1}{3}})$: \\
   $|S| \leq n, \; np(1+\omega^{-\frac{1}{3}})$-each element. \\
-  $k = \frac{\log \left(\frac{n}{3}\right)}{\log \left(n \cdot p \cdot \left(1+\omega^{-\frac{1}{3}}\right)\right)}
+  $k \stackrel{?}{=}
+  \frac{\log \left(\frac{n}{3}\right)}{\log \left(n \cdot p \cdot \left(1+\omega^{-\frac{1}{3}}\right)\right)}
   = \log_{np(1+\omega^{-\frac{1}{3}})} \frac{n}{3} = \Theta\left(\frac{\ln(n)}{\ln(np)}\right)$. \\
   $|N_{\leq k}| = |N_1 \cup \dots \cup N_k|$.
   \begin{align*}
@@ -965,7 +1024,7 @@ $\frac{1}{n}, \frac{1}{n^3}, \frac{\log n}{n}$
     &= \frac{(np(1+\omega^{-\frac{1}{3}}))^{k+1}-1}{np(1+\omega^{-\frac{1}{3}}) - 1} \\
     &< \frac{np(1+\omega^{-\frac{1}{3}})^{k+1}}{\frac{1}{2} np(1+\omega^{-\frac{1}{3}})} \\
     &= 2 np(1+\omega^{-\frac{1}{3}})^k \\
-    &\stackrel{k}{=} 2 \cdot \frac{n}{3} \text{ haven't covered all} \\
+    &\stackrel{k}{=} 2 \cdot \frac{n}{3} \text{ - haven't covered all} \\
     &\implies diam(G) > k \text{ bound from below}.
   \end{align*}
 
@@ -987,6 +1046,7 @@ $\frac{1}{n}, \frac{1}{n^3}, \frac{\log n}{n}$
   Number of neighbors in $N_k$ A.S. $\geq 1$, \\
   $|N_k| \geq \left(\frac{1}{2} n p \left(1-\omega^{-\frac{1}{3}}\right)\right)^k \approx c \cdot n$ \\
   $\implies diam (G) = k + 1 $ A.S.
+  \qed
 \end{pro}
 
 \subsection{Scale free property}
@@ -1033,13 +1093,15 @@ Grow:
   $p_k \cdot (n+1) = p_k \cdot n - p_{k-1} \cdot \frac{k}{2} + p_{k-1} \cdot \frac{k-1}{2}$ \\
   $\implies p_k = \frac{k-1}{k+2} p_{k-1}$. \\
   For degree $m$: \\
-  $(n+1) \cdot p_{n+1}(m) = p_n(m) \cdot n - p_n(m) \cdot \frac{m}{2} + 1$ %??
+  $(n+1) \cdot p_{n+1}(m) = p_n(m) \cdot n - p_n(m) \cdot \frac{m}{2} + 1$ \\%??
+  $(n+1) \cdot p_m = n \cdot p_m - \frac{m}{2} \cdot p_m + 1$
   \begin{align*}
     &p_m = \frac{2}{m+2} \\
     \implies &p_{m+1} = \frac{2}{m+2} \cdot \frac{m}{m+3} \\
     \implies &p_{m+2} = \frac{2m(m+1)}{(m+2)(m+3)} \\
     \implies &p_k = \frac{2m(m+1)}{k(k+1)(k+2)}.
   \end{align*}
+  \qed
 \end{pro}
 
 
@@ -1143,25 +1205,25 @@ Recall: k-SAT:
   &F = C_1 \land \dots \land C_m \\
   &C_i = X_{i1} \lor \dots \lor X_{ik}.
 \end{align*}
-3-SAT: NP complete. \\
-\begin{alltt}
+3-SAT: NP complete.
+\begin{lstlisting}
   Algorithm:
     def rand2SAT(F):
-      \(b\sp{0}\) = \((b_0\sp{0} \dots b_n\sp{0})\)
-      for i in range(t):
-        if F(\(b\sp{i}\)) = 1:
+      $b^0$ = $(b_0^0 \dots b_n^0)$
+      for $i$ in range($t$):
+        if $F(b^{i}) = 1$:
           return True
-        Cl <- clause trat is False
-        xj <- uniformly at random from xl1 and xl2
-        \(b\sp{i+1}\) = (\(b_0\sp{i} \dots not b_j\sp{i} \dots b_n\sp{i}\))
-      if F(\(X\sp{t}\)) = 1:
+        $C_l$ <- clause that is False
+        $x_j$ <- uniformly at random from $x_{l1}$ and $x_{l2}$
+        $b^{i+1} = (b_0^{i} \dots \overline{b_j^{i}} \dots b_n^{i})$
+      if $F(b^{t}) = 1$:
         return True
       return False
-\end{alltt}
+\end{lstlisting}
 \begin{theorem} \text{} \\
   If $k = 8n^2$, then $P(\text{rand2SAT = True} \mid \text{correct answer is True}) \geq \frac{3}{4}$.
 \end{theorem}
-\begin{pro} \text{}
+\begin{pro} \text{} \\
   Let $a = (a_1 \dots a_n)$ be a correct solution. \\
   Let $X_i =$ Hamming distance from $b^i$ to $a$. \\
   % skica(i)
@@ -1185,6 +1247,7 @@ Recall: k-SAT:
   $E(\text{steps in algorithm to reach correct solution}) = E(Z) \leq 2n^2$ \\
   $P(\text{algorithm hasn't reached correct solution after $8n^2$ steps}) \\
   = P(Z > 8n^2) \stackrel{\text{Markov}}{\leq} \frac{E(Z)}{8n^2} \leq \frac{1}{4}$.
+  \qed
 \end{pro}
 
 
@@ -1194,9 +1257,9 @@ $\Omega$: set. \\
 Let $G$ be a symmetric graph on $\Omega$. \\
 We form M.C: \\
 $P_{x,y} = \begin{cases}
-  \frac{1}{M} \text{ if } x \neq y \land x \sim y \\
-  0 \text{ if } x \neq y \land x \nsim y \\
-  1 - \frac{|N(x)|}{M} \text{ if } x = y
+  \frac{1}{M}: &\text{ if } x \neq y \land x \sim y \\
+  0: &\text{ if } x \neq y \land x \nsim y \\
+  1 - \frac{|N(x)|}{M}: &\text{ if } x = y
 \end{cases}$ \\
 $M \geq \max_{v \in \Omega} |N(v)|$. \\
 If $G$ is connected $\implies$ M.C. is irrecudible. \\
@@ -1234,12 +1297,12 @@ $\Omega$: set, \\
 $\pi$: chosen distribution on $\Omega$. \\
 Make $G$ graph on $\Omega$ \\
 $P_{x,y} = \begin{cases}
-  \frac{1}{M} \cdot \min \left(1, \frac{\pi_y}{\pi_x}\right) \text{ if } x \neq y \land x \sim y \\
-  0 \text{ if } x \neq y \land x \nsim y \\
-  1 - \sum_{y \in N(x)} \text{ if } x = y
+  \frac{1}{M} \cdot \min \left(1, \frac{\pi_y}{\pi_x}\right): &\text{ if } x \neq y \land x \sim y \\
+  0: &\text{ if } x \neq y \land x \nsim y \\
+  1 - \sum_{y \in N(x)}: &\text{ if } x = y
 \end{cases}$ \\
 $M \geq \max_{v \in \Omega} |N(v)|$ \\
-$\pi \stackrel{?}{=} \pi P$ \\
+$\pi \stackrel{?}{=} \pi P$
 \begin{align*}
   (\pi P)_x &= \sum_y \pi_y P_{y,x} =
     \sum_{y \in N(x)} \pi_y \frac{1}{M} \min \left(\left(1, \frac{\pi_y}{\pi_x}\right)\right)
@@ -1254,17 +1317,17 @@ $\pi \stackrel{?}{=} \pi P$ \\
   $\Omega = \Z \cap [-1000,1000]$ \\
   $\pi \sim e^{-\frac{(x-\mu)^2}{2 \delta}}$ \\
   % skica
-  \begin{alltt}
-    \(X\sb{0}\) arbitrary
-    for i = in range(1,m):
-      y <- uniformly from {\(X\sb{i}\)+1,\(X\sb{i}\)-1}
-      M <- uniformly from [0,1]
-      if \(M \leq \frac{\pi(y)}{\pi(x)}\):
-        \(X\sb{i+1}\) = y
+  \begin{lstlisting}
+    $X_0$ arbitrary
+    for $i$ = in range(1,$m$):
+      $y$ <- uniformly from $\{X_i-11,X_i+1\}$
+      $M$ <- uniformly from $[0,1]$
+      if $M \leq \frac{\pi(y)}{\pi(x)}$:
+        $X_{i+1} = y$
       else:
-        \(X\sb{i+1}\) = \(X\sb{i}\)
-    return \(X\sb{m}\)
-  \end{alltt}
+        $X_{i+1} = X_{i}$
+    return $X_{m}$
+  \end{lstlisting}
 \end{ex}
 \begin{ex} \text{} \\
   Find maximum of a positive function $f$. \\
@@ -1295,7 +1358,7 @@ $X_i \to X_{i+1}$:
   \item if $v \in X_j$ and $X_i \cup \{v\}$ is independent $\implies \; X_{i+1} = X_i \cup \{v\}$,
   \item otherwise $X_{i+1} = X_i$.
 \end{itemize}
-\begin{ex} \text{}
+\begin{ex} \text{} \\
   Bayes: $P(A \mid B) = \frac{P(A \cap B)}{P(B)} = \frac{P(B \mid A) P(A)}{P(B)}$. \\
   $B \leftarrow$ machine is giving values, e.g. $y_1 = 0.05, y_2 = -0.1, y_3 = 0.07, y_4 = 3$. \\
   We believe $B \sim N(\mu, 0,05)$. \\
@@ -1346,6 +1409,7 @@ $w_{ij}$: weight from $i$ to $j$.
 \begin{pro} \text{} \\
   $\pi P = \pi \left[\frac{w_{ij}}{deg^{+}(x_i)}\right]_{i,j=1}^n = \left[\frac{\sum_j w_ji}{|E|}\right]_{i=1}^n
   = \left[\frac{deg^{-}(x_i)}{|E|}\right]_{i=1}^n = \left[\frac{deg^{+}(x_i)}{|E|}\right]_{i=1}^n$.
+  \qed
 \end{pro}
 $h_{s,s} = \frac{1}{\pi_s} \leq \frac{|E|}{deg^{+}(s)} 
 \leq \frac{3(|A| - |M|) d + |M| (d-1) + (|A| - |M|) d + |M| (d-1)}{(|A| - |M|) d} \leq \frac{4 |A|}{|A| - |M|}$. \\
@@ -1354,7 +1418,7 @@ $|A| = n$ \\
 Expected time to find 1-factor $\leq \sum_{i=1}^{n-1} \frac{4n}{n-i} = 4n \sum_{i=1}^{n-1} \frac{1}{i} \leq 4n (1 + \ln n)$ -
 in $O(n \log n)$.
 
-\subsection{Network centrality}
+\subsection*{Network centrality}
 
 % skica
 Degree as measure - natural idea. \\
@@ -1379,19 +1443,19 @@ $P(X_i = \min (S_i)) = \frac{1}{i}$. \\
 $Y = \left| \{j \in \{1 \dots n\} \mid j = \text{ minimal of } S_j\} \right|$ \\
 $Y = Y_1 + \dots + Y_n$ \\
 $Y_j = \begin{cases}
-  1 \text{ if } i = \min S_i \\
-  0 \text{ otherwise}
+  1: \text{ if } i = \min S_i \\
+  0: \text{ otherwise}
 \end{cases}$ \\
 $E(Y) = \sum_{i=1}^{n} E(Y_i) = \sum_{i=1}^{n} \frac{1}{i}$ in $O(\log n)$.
-\begin{alltt}
+\begin{lstlisting}
   Alg():
-    X1 .. Xn = random permutation of S
-    min = X1
-    for i in range(1,n+1):
-      if Xi < min:
-        print("HA")
-        min = Xi
-\end{alltt}
+    $X_1 \dots X_n$ = random permutation of $S$
+    $min = X1$
+    for $i$ in range(1,$n+1$):
+      if $Xi < min$:
+        print(\sn{HA})
+        $min = Xi$
+\end{lstlisting}
 We get $O(\log n)$ \sn{HA} printed. \\
 Incremental construction (IC). \\
 Input $S = \{s_1 \dots s_n\}$. \\
@@ -1415,25 +1479,25 @@ Define $DS(S_i)$:
   \item for each $X_j$, $j > i$ we will save in which interval it is,
   \item for each left point of the interval we will save the right point.
 \end{itemize}
-\begin{alltt}
+\begin{lstlisting}
   QuicksortRIC(S):
     # start of DS(Si)
-    I=[(-\(\infty\),\(\infty\))]
-    P[(-\(\infty\),\(\infty\))] = S
-    for each Xi:
-      Int(Xi) = (-\(\infty\),\(\infty\))
-    Next(\(\infty\)) = \(\infty\)
+    $I=[(-\infty,\infty)]$
+    $P[(-\infty,\infty)] = S$
+    for each $X_i$:
+      $Int(X_i) = (-\infty,\infty)$
+    $Next(-\infty) = \infty$
     # end of DS(Si)
-    for i in range(1,n+1):
-      Ii = Int(Xi) = (Xj,Xk)  # Ii splits interval (Xj,Xk)
-      Ii1 = (Xj,Xi)
-      Ii2 = (Xi,Xk)
-      for Xl \(\neq\) Xi, Xl \(\in\) P(I): 
-        add Xl to P(Ii1) or P(Ii2) depending on Xl < Xi or Xl > Xi
-      Next(Xj) = Xi
-      Next(Xi) = Xk
-    return [Next(\(-\infty\)), Next(Next(\(-\infty\))) ..]
-\end{alltt}
+    for $i$ in range(1,$n+1$):
+      $I_i = Int(X_i) = (X_j,X_k)$  # Ii splits interval (X_j,X_k)
+      $I_{i1} = (X_j,X_i)$
+      $I_{i2} = (X_i,X_k)$
+      for $Xl \neq X_i, X_l \in P(I)$: 
+        add $X_l$ to $P(I_{i1})$ or $P(I_{i2})$ depending on $X_l < X_i$ or $X_l > X_i$
+      $Next(X_j) = X_i$
+      $Next(X_i) = X_k$
+    return $[Next(-\infty), Next(Next(-\infty)) \dots]$
+\end{lstlisting}
 Similarity to quicksort: spliting intervals.
 
 
@@ -1495,8 +1559,8 @@ One dimension.
 where $n$ is number of constraints. \\
 % skica
 \begin{itemize}
-  \item $a_i$ positive: $(-\infty, \frac{b_i}{a_i}]$,
-  \item $a_i$ negative: $[\frac{b_i}{a_i}, \infty)$.
+  \item $a_i$ positive: $(-\infty, \frac{b_i}{a_i}] \quad \left(x_i \leq \frac{b_i}{a_i}\right)$,
+  \item $a_i$ negative: $[\frac{b_i}{a_i}, \infty) \quad \left(x_i \geq \frac{b_i}{a_i}\right)$.
 \end{itemize}
 $a_i \neq 0$. \\
 Alg:
@@ -1553,7 +1617,7 @@ Analysis:
   \item worst case: $\sum_{i=1}^{n} O(i) = O(n^2)$,
   \item expected: $E(X) = \sum_{i=1}^{n} E(X_i)$,
   \item $X_i =$ running time of $i$-th iteration,
-  \item $X_i = \begin{cases}O(1); \text{ case 1} \\ O(i); \text{ case 2}\end{cases}$
+  \item $X_i = \begin{cases}O(1): &\text{ case 1} \\ O(i): &\text{ case 2}\end{cases}$
   \item $P(\text{case 2}) \leq \frac{2}{i}$ - optimal point on at most $2$ lines,
   \item $E(X) \leq \sum_{i=1}^{n} O(1) \cdot 1 + O(i) \cdot \frac{2}{i} = O(n)$.
 \end{itemize}
@@ -1589,7 +1653,7 @@ Input: $P_1 \dots P_n$, \\
 output: $(s_1, s_2), r$.
 \begin{align*}
   \max \; &r \\
-  &d = \left| \frac{s_2 - a_i s_1 - b_i}{\sqrt{a_i^2 + 1}}\right| \\
+  &r = \left| \frac{s_2 - a_i s_1 - b_i}{\sqrt{a_i^2 + 1}}\right| \\
   &\frac{s_2 - a_i s_1 - b_i}{\sqrt{a_i^2 + 1}} \geq r \text{ - line above } P \\
   &-\frac{s_2 - a_i s_1 - b_i}{\sqrt{a_i^2 + 1}} \leq -r \text{ - line below } P
 \end{align*}
@@ -1653,7 +1717,7 @@ P_r(h(x_i) = t_i \; \forall i) \leq \frac{1}{m^k}$.
   $h_0: \{0 \to 0, 1 \to 0, 2 \to 1, 3 \to 1\}$, \\
   $h_1: \{0 \to 0, 1 \to 1, 2 \to 0, 3 \to 1\}$, \\
   $h_2: \{0 \to 0, 1 \to 1, 2 \to 1, 3 \to 0\}$. \\
-  $P(h(0) = h(2)) = \frac{2}{3} < \frac{1}{2}$ - not universal.
+  $P(h(0) = h(2)) = \frac{2}{3} > \frac{1}{2}$ - not universal.
 \end{ex}
 Why universal? \\
 $U, V, M$ \\
@@ -1661,8 +1725,8 @@ $H$ universal: $\forall x, y: \; P(h(x) = h(y)) \leq \frac{1}{m}$. \\
 $X$: number of collisions of $V$. \\
 $E(X) = E\left(\sum_{x,y \in V, x \neq y} X_{x,y}\right)$ \\
 $X_{x,y} = \begin{cases}
-  1 \text{ if } h(x) = h(y) \\
-  0 \text{ else}
+  1: \text{ if } h(x) = h(y) \\
+  0: \text{ else}
 \end{cases}$ \\
 $E(X) = \sum_{x,y \in V, x \neq y} E(X_{x,y}) \leq \binom{n}{2} \cdot \frac{1}{m}$. \\
 $U, V, M, H$ \\
@@ -1672,7 +1736,7 @@ $T[h(v)] = v$. \\
 For $x \in V$ we check $T[h(x)]$ if equals $x$, \\
 for $y \in U \setminus V$, $T[h(y)] \neq y$. \\
 For $z \in V$, $T[h(z)]$ can happen $\neq z$ if $h$ has collisions in $V$.
-\begin{lemma}
+\begin{lemma} \text{} \\
   Let $m \geq n^2$ and $H$ universal.
   Then the probability that $h$ has no collisions in $V \; \geq \frac{1}{2}$.
 \end{lemma}
@@ -1681,6 +1745,7 @@ For $z \in V$, $T[h(z)]$ can happen $\neq z$ if $h$ has collisions in $V$.
   $E(X) \leq \binom{n}{2} \cdot \frac{1}{m} < \frac{n^2}{2} \cdot \frac{1}{n^2} = \frac{1}{2}$ \\
   $P(X \geq 1) \stackrel{\text{Markov}}{\leq} \frac{E(X)}{1} = \frac{1}{2}$ \\
   $P(X = 0) \geq \frac{1}{2}$.
+  \qed
 \end{pro}
 \begin{ex}[Universal hash family] \text{} \\
   $U = \{0, 1 \dots u-1\}$ (bits $\equiv$ numbers) \\
@@ -1691,7 +1756,7 @@ For $z \in V$, $T[h(z)]$ can happen $\neq z$ if $h$ has collisions in $V$.
   $ax + b \in \Z_p$ \\
   $H = \{h_{a,b} \mid a, b \in \Z_p, \; a \neq 0\}$.
 \end{ex}
-\begin{pro}
+\begin{pro} \text{} \\
   $P(h_{a,b}(x) = h_{a,b}(y)) = ?$ \\
   $x, y$ fixed. \\
   For any $a, b$ denote \\
@@ -1710,6 +1775,7 @@ For $z \in V$, $T[h(z)]$ can happen $\neq z$ if $h$ has collisions in $V$.
   $t_x = t_y + km$ \\
   $P\left(h_{a,b}(x) = h_{a,b}(y)\right) \leq \frac{p\left(\lceil\frac{p}{m}\rceil-1\right)}{p(p-1)}
   \leq \frac{\frac{p-1}{m}}{p-1} = \frac{1}{m}$.
+  \qed
 \end{pro}
 Function random for $2$ elements, fixed for $\geq 3$. \\
 Higher k-independent: better.
@@ -1743,23 +1809,28 @@ $E(\max_x X_x) \neq \max_x E(X_x) = 1$.
   $P\left(X_j \geq \frac{3 \ln n}{\ln \ln n}\right) = P($there exists subset $S$ of balls thrown to bin $j)$. \\
   $|S| = k$
   \begin{align*}
-    &P\left(\cup_{S \text{ balls}, |S|=k} \text{balls from $S$ are thrown to bin }j\right) \\
+    &P\left(\cup_{S \text{ balls}, |S|=k} \text{ balls from $S$ are thrown to bin }j\right) \\
     &\leq \sum_{S \text{ balls}, |S|=k} P(\text{balls from $S$ are thrown to }j) \\
     &= \binom{n}{k} \left(\frac{1}{n}\right)^k \\
-    &\leq \frac{n^k}{k!} \cdot \frac{1}{n^k} = \frac{1}{k!} = (*).
-  \end{align*}
-  Note: $e^x = \sum_{i=1}^{\infty} \frac{k^i}{i!} \geq \frac{k^k}{k!}$.
-  \begin{align*}
-    (*)& \leq \frac{e^k}{k^k} \\
+    &\leq \frac{n^k}{k!} \cdot \frac{1}{n^k} \\
+    &= \frac{1}{k!}
+    &\stackrel{\refeq{eq:exp-fac}}{\leq} \frac{e^k}{k^k} \\
     &= \left(\frac{e \ln n}{3 \ln \ln n}\right)^{\frac{3 \ln n}{\ln \ln n}} \\
     &\leq e^{\frac{3 \ln n}{\ln \ln n} \cdot \left(\ln \ln \ln n - \ln \ln n\right)} \\
-    &= e^{-3 \ln n + \frac{\ln \ln \ln n \cdot (\ln n \cdot 3)}{\ln \ln n}} = (**)
+    &= e^{-3 \ln n + \frac{\ln \ln \ln n \cdot (\ln n \cdot 3)}{\ln \ln n}}
+    &\stackrel{\refeq{eq:lnlnln}}{\leq} e^{-3 \ln n + \ln n} \\
+    &= \frac{1}{n^2};
   \end{align*}
-  $\frac{\ln \ln \ln n}{\ln \ln n} \to 0$
-  \begin{equation*}
-    (**) \leq e^{-3 \ln n + \ln n} = \frac{1}{n^2}.
-  \end{equation*}
+  \begin{equation}
+    \label{eq:exp-fac}
+    e^x = \sum_{i=1}^{\infty} \frac{k^i}{i!} \geq \frac{k^k}{k!},
+  \end{equation}
+  \begin{equation}
+    \label{eq:lnlnln}
+    \frac{\ln \ln \ln n}{\ln \ln n} \to 0.
+  \end{equation}
   $P(\text{at least for $1$ bin }j \geq k) = n \cdot \frac{1}{n^2} = \frac{1}{n}$.
+  \qed
 \end{pro}
 
 
@@ -1802,7 +1873,8 @@ Construction time:
 together $O(n)$. \\
 Lookup time: $O(1)$ (evaluating $h(x)$ and $h_{h(x)}(x)$). \\
 Space: $O(C_1^2 + \dots + C_n^2)$ in $O(n)$. \\
-By first step $n >$ number of collisions of $h = \sum_{i=1}^{n} \binom{C_i}{2} = \sum_{i=1}^{n} \frac{C_i^2 - C_i}{2}$ \\
+By first step: \\
+$n >$ number of collisions of $h = \sum_{i=1}^{n} \binom{C_i}{2} = \sum_{i=1}^{n} \frac{C_i^2 - C_i}{2}$ \\
 $\implies \sum_{i=1}^{n} C_i^2 < 2n + \sum_{i=1}^{n} C_i = 3n$.
 
 
@@ -1845,6 +1917,7 @@ put the ball in bin with minimal load.
   \end{align*}
   $\implies$ for $i = \frac{\log (\log_2 n)}{\log d}$ is $b_i < 1$ $\implies$ no bins with load
   $> \frac{\log (\log_2 n)}{\log d}$.
+  \qed
 \end{pro}
 Application: \\
 We sample 2 hash functions $h_1, h_2: U \to M$. \\
@@ -1869,15 +1942,15 @@ Questions:
 We can think of positions in the table as vertices and elements of $V$ as edges. \\
 $|V|$ edges are inserted uniformly at random (if ideal hash function)
 $\implies$ random graph. \\
-Erdös-reny model: $G_{n,m} \approx G_{n,p}$ if $m = \binom{n}{2} p$ (A.S. properties). \\
-If $np < 1 - \epsilon$: all connected components have size at most $O(\log n)$,
+Erdös-reny model: $G_{n,m} \approx G_{n,p}$ if $m = \binom{n}{2} \cdot p$ (A.S. properties). \\
+If $np < 1 - \varepsilon$: all connected components have size at most $O(\log n)$,
 components are trees or at most 1 cycle per component, expected size of a component is $O(1)$. \\
 % skica
 % skica
 Fact: if graph has at most 1 cycle per component, then inserting can be done and takes at most
 $2 \cdot $(size of component) time (each edge changes direction at most 2 times).
 \begin{theorem} \text{} \\
-  Let $n = |U|$, $h_1, h_2: U \to M$, $m = |M| = 2 \cdot (1 + \epsilon) \cdot n$,
+  Let $n = |U|$, $h_1, h_2: U \to M$, $m = |M| = 2 \cdot (1 + \varepsilon) \cdot n$,
   then with high probability cockoo hashing works correctly with
   \begin{itemize}
     \item inserting time:
@@ -1890,9 +1963,9 @@ $2 \cdot $(size of component) time (each edge changes direction at most 2 times)
   \end{itemize}
 \end{theorem}
 Dynamically add element: \\
-$m = 2 \cdot (1 + \epsilon) \cdot n$ \\
+$m = 2 \cdot (1 + \varepsilon) \cdot n$ \\
 $p = \frac{m^{'}}{\binom{n^{'}}{2}} = \frac{2 m^{'}}{n^{'} (n^{'}-1)}$ \\
-$pn^{'} = \frac{2m^{'}}{(n^{'}-1)} = \frac{2n^{'}}{2 (1+\epsilon) n^{'}} = \frac{1}{1+\epsilon} < 1 + \epsilon^{'}$
+$pn^{'} = \frac{2m^{'}}{(n^{'}-1)} = \frac{2n^{'}}{2 (1+\varepsilon) n^{'}} = \frac{1}{1+\varepsilon} < 1 + \varepsilon^{'}$
 
 
 % 12. predavanje: 22.12.
@@ -1973,7 +2046,7 @@ We could be interested in
   \item moments: $\lVert f \rVert^2 = \sum_{i \in [n]} f_i^2$
   \item $\vdots$
 \end{itemize}
-We want to use memory in $O(poly(\log n, \log m)) << O(n, n)$. \\
+We want to use memory in $O(poly(\log n, \log m)) << O(n, m)$. \\
 Most problems cannot be solved precisely, hence we search for $(\varepsilon, \delta)$-approximation. \\
 Algorithm $A(G)$:
 \begin{itemize}
@@ -1987,25 +2060,21 @@ e.g. we can choose stream that \sn{attacks algorithm}).
 
 \section{Count min sketch}
 
-For a given $i \in [n]$ (token) at the end of stream give $f_i$. \\
-$A(\sigma, \varepsilon, \delta)$:
-\begin{itemize}[label={}]
-  \item Init: $k = \lceil \frac{2}{\varepsilon} \rceil, t = \lceil \log_2 \left(\frac{1}{\delta}\right) \rceil$.
-  \item We choose $t$ hash functions $h_1 \dots h_t: [n] \to M = [k] = \{1 \dots k\}$ from a universal family $H$.
-  \item Let $C[0 \dots t-1][0 \dots k-1]$ be 2-dim (hash) table, $C[i][j] = 0 \; \forall i,j$.
-  \item Updates:
-    \begin{itemize}[label={}]
-      \item for every token $a_i \in \sigma$ we update $C$
-      \begin{itemize}[label={}]
-        \item for $j = 0, 1 \dots t-1$
-        \begin{itemize}[label={}]
-          \item $C[i][h_i(a_j)] += 1$
-        \end{itemize}
-      \end{itemize}
-    \end{itemize}
-  \item Output: we asked $a \in [n]$, return $\overline{f_a} = \min_{0 \leq j \leq t-1} C[j][h_j(a)]$;
-    min collitions.
-\end{itemize}
+For a given $i \in [n]$ (token) at the end of stream give $f_i$.
+\begin{lstlisting}
+  $A(\sigma, \varepsilon, \delta)$:
+    Init: $k = \lceil \frac{2}{\varepsilon} \rceil, t = \lceil \log_2 \left(\frac{1}{\delta}\right) \rceil$.
+    We choose $t$ hash functions $h_1 \dots h_t: [n] \to M = [k] = \{1 \dots k\}$
+    from a universal family $H$.
+    Let $C[0 \dots t-1][0 \dots k-1]$ be 2-dim (hash) table
+    $C[i][j] = 0 \; \forall i,j$.
+    Updates:
+        for every token $a_i \in \sigma$ we update $C$
+          for $j = 0, 1 \dots t-1$:
+            $C[i][h_i(a_j)] += 1$
+    Output: we asked $a \in [n]$ return $\overline{f_a} = \min_{0 \leq j \leq t-1} C[j][h_j(a)]$;
+      min collisions.
+\end{lstlisting}
 \begin{theorem} \text{} \\
   For every $a \in [n]$ it holds \\
   $f_a \leq \overline{f_a} \leq f_a + \varepsilon m$ \\
@@ -2024,17 +2093,24 @@ O\left(\frac{2}{\varepsilon} \cdot \log_2 \left(\frac{1}{\delta}\right) \log m\r
   $X_i = \sum_{y \in [n], y \neq a} I_{x,y}^i \cdot f_y$.
   \begin{align*}
     E(X_i) &= \sum_{y \in [n], y \neq a} E(I_{x,y}^i) \cdot f_y \\
-    &\stackrel{*}{\leq} \sum_{y \in [n], y \neq a} \frac{1}{k} \cdot f_y \\
+    &\stackrel{\refeq{eq:universal}}{\leq} \sum_{y \in [n], y \neq a} \frac{1}{k} \cdot f_y \\
     &\leq \frac{1}{n} \cdot m \\
-    &\stackrel{**}{\leq} \frac{m}{2}
+    &\stackrel{\refeq{eq:count-min-prob}}{\leq} \frac{m}{2};
   \end{align*}
-  $*$: hash function from universal family. \\
-  $**: P(X_i \geq \varepsilon m) \stackrel{\text{Markov}}{\leq} \frac{\varepsilon m}{2 \varepsilon m} = \frac{1}{2}$
-  for fixed $i$. \\
+  \begin{equation}
+    \label{eq:universal}
+    \text{hash function from universal family,}
+  \end{equation}
+  \begin{equation}
+    \label{eq:count-min-prob}
+    P(X_i \geq \varepsilon m) \stackrel{\text{Markov}}{\leq} \frac{\varepsilon m}{2 \varepsilon m} = \frac{1}{2}
+    \text{ for fixed } i.
+  \end{equation}
   \begin{align*}
     P(\overline{f_a} - f_a \geq \varepsilon m) &\leq P(X_i \geq \varepsilon m \; \forall i) \\
     &\stackrel{\text{indep.}}{=} \left(\frac{1}{2}\right)^t \leq \delta.
   \end{align*}
+  \qed
 \end{pro}
 
 
@@ -2044,30 +2120,22 @@ O\left(\frac{2}{\varepsilon} \cdot \log_2 \left(\frac{1}{\delta}\right) \log m\r
 
 We want $d = |\{i \in [n], f(i) > 0\}|$. \\
 Define for $x \in \N$: \\
-$zeros(x) = \max \{i \mid 2^i \text{ divides } i\}$: number of zeros at the end in binary representation of $x$. \\
-Alg($\sigma$):
-\begin{itemize}[label={}]
-  \item Init:
-  \begin{itemize}
-    \item $h$: random hash function from 2-independent family.
-    \item $\#$ recall: $[n]$: all possible elements of $\sigma$.
-    \item $h: [n] \to [n]$
-    \item unlog? $n = 2^{n^{'}}$
-    \item $z = 0$
-  \end{itemize}
-  \item Update:
-  \begin{itemize}[label={}]
-    \item $a_i \in \sigma$
-    \item if $zeros(h(a_i)) \geq z$:
-    \begin{itemize}[label={}]
-      \item $z = zeros(h(a_i))$
-    \end{itemize}
-  \end{itemize}
-  \item Output:
-  \begin{itemize}[label={}]
-    \item $\overline{d} = 2^{z + \frac{1}{2}}$
-  \end{itemize}
-\end{itemize}
+$zeros(x) = \max \{i \mid 2^i \text{ divides } x\}$: number of zeros at the end in binary representation of $x$.
+\begin{lstlisting}
+  Alg($\sigma$):
+    Init:
+      $h$: random hash function from 2-independent family.
+      $\#$ recall: $[n]$: all possible elements of $\sigma$.
+      $h: [n] \to [n]$
+      unlog? $n = 2^{n^{'}}$
+      $z = 0$
+    Update:
+      $a_i \in \sigma$
+      if $zeros(h(a_i)) \geq z$:
+        $z = zeros(h(a_i))$
+    Output:
+      $\overline{d} = 2^{z + \frac{1}{2}}$
+\end{lstlisting}
 Define $\forall a \in [n], r \in \N$ \\
 $X_{r, a} = \begin{cases}
   1: \text{ if } zeros(h(a)) \geq r \\
@@ -2084,37 +2152,39 @@ $Y_r = 0 \iff \overline{z} < r$.
 \end{lemma}
 \begin{pro} \text{} \\
   $P(X_{r, a} = 1) = P(zeros(h(a)) \geq r) = \frac{2^{n^{'}-r}}{2^{n^{'}}} = \frac{1}{2^r}$; \\
-  $2^{n^{'}}$: all, $2^{n^{'}-r}$: fixed. \\
+  $2^{n^{'}}$: all, \\
+  $2^{n^{'}-r}$: fixed. \\
   $P(X_{r, a_1} = 1 \land X_{r, a_2} = 1) \stackrel{h \text{ 2 indep.}}{=}
   P(X_{r, a_1} = 1) \cdot P(X_{r, a_2} = 1) = \frac{1}{\left(2^r\right)^2}$.
+  \qed
 \end{pro}
 $P(\overline{d} \geq 3d)$ small? \\
 $E(Y_r) = \sum_{a \in \sigma} E(X_{a, r}) = \sum_{a \in \sigma} \frac{1}{2^r} = \frac{d}{2^r}$ \\
 Let $k \in \N$ be such that $2^{k + \frac{1}{2}} \geq 3d > 2^{k - \frac{1}{2}}$.
 \begin{align*}
-  P(\overline{d} > 3d) &\leq P(2^{\overline{z} - \frac{1}{2}} > 2^{k - \frac{1}{2}}) \\
-  &= P(\overline{z} + \frac{1}{2} > k - \frac{1}{2}) \\
+  P\left(\overline{d} > 3d\right) &\leq P\left(2^{\overline{z} - \frac{1}{2}} > 2^{k - \frac{1}{2}}\right) \\
+  &= P\left(\overline{z} + \frac{1}{2} > k - \frac{1}{2}\right) \\
   &= P(\overline{z} \geq k) \\
-  &\stackrel{\text{lemma}}{=} P(Y_k > 0) \\
-  &\stackrel{\in \N}{=} P(Y_k \geq 1) \\
+  &\stackrel{\text{lemma}}{\longeq{25pt}} P(Y_k > 0) \\
+  &\stackrel{\in \N}{\longeq{15pt}} P(Y_k \geq 1) \\
   &\stackrel{\text{Markov}}{\leq} \frac{E(Y_k)}{1} = \frac{d}{2^k} \\
   &\stackrel{k}{\leq} \frac{d \cdot 2^{\frac{1}{3}}}{3d} = \frac{\sqrt{2}}{3}.
 \end{align*}
 $P(\overline{d} \leq \frac{d}{3})$ small? \\
 Let $l \in \N$ be such that $2^{l - \frac{1}{2}} \leq \frac{d}{3} < 2^{l + \frac{1}{2}}$.
 \begin{align*}
-  P(\overline{d} < \frac{d}{3}) &\leq P(2^{\overline{z} + \frac{1}{2}} < 2^{l + \frac{1}{2}}) \\
-  &= P(\overline{z} + \frac{1}{2} < l + \frac{1}{2}) \\
+  P\left(\overline{d} < \frac{d}{3}\right) &\leq P\left(2^{\overline{z} + \frac{1}{2}} < 2^{l + \frac{1}{2}}\right) \\
+  &= P\left(\overline{z} + \frac{1}{2} < l + \frac{1}{2}\right) \\
   &= P(\overline{z} \leq k) \\
-  &\stackrel{\text{lemma}}{=} P(Y_l = 0) \\
-  &= P(Y_l - \frac{d}{2^l} < -\frac{d}{2^l}) \\
-  &\leq P(|Y_l - \frac{d}{2^l}| \geq \frac{d}{2^l}) \\
+  &\stackrel{\text{lemma}}{\longeq{25pt}} P(Y_l = 0) \\
+  &= P\left(Y_l - \frac{d}{2^l} < -\frac{d}{2^l}\right) \\
+  &\leq P\left(|Y_l - \frac{d}{2^l}| \geq \frac{d}{2^l}\right) \\
   &\stackrel{\text{Chebisev}}{\leq} \frac{Var(Y_l)}{\left(\frac{d}{2^l}\right)^2} \\
   &\stackrel{l}{\leq} \frac{d \cdot 2^{\frac{1}{3}}}{3d} = \frac{\sqrt{2}}{3};
 \end{align*}
 \begin{align*}
   Var(Y_l) &= Var\left(\sum_{a \in \sigma} X_{a, l}\right) \\
-  &\stackrel{h \text{ 2-indep.}}{=} \sum_{a \in \sigma} Var(X_{a, l}) \\
+  &\stackrel{h \text{ 2-indep.}}{\longeq{35pt}} \sum_{a \in \sigma} Var(X_{a, l}) \\
   &= \sum_{a \in \sigma} E(X_{a, l}^2) - E(X_{a, l})^2 \\
   &\stackrel{E(X_{a,l}) \in \{0,1\}}{\leq} \sum_{a \in \sigma} E(X_{a, l}) \\
   &= \frac{d}{2^l}.
@@ -2123,7 +2193,8 @@ $P\left(\frac{d}{3} < \overline{d} < 3d\right) \geq 1 - \frac{2 \sqrt{3}}{3}$. \
 We use algorithm $k$-times, getting $\overline{d_1} \dots \overline{d_k}$ (we need independent hash functions). \\
 Define: $\overline{d} = median(\overline{d_1} \dots \overline{d_k})$. \\
 \begin{align*}
-  P(\overline{d} \geq 3d) &= P(\text{at least} \left\lceil \frac{k}{2} \right\rceil \overline{d}-s \text{ are } \geq 3d) \\
+  P(\overline{d} \geq 3d) &=
+  P\left(\text{at least} \left\lceil \frac{k}{2} \right\rceil \overline{d}-s \text{ are } \geq 3d\right) \\
   &= P\left(X \geq \frac{k}{2}\right) \leq e^{-ck};
 \end{align*}
 $c$: some constant, \\
@@ -2157,7 +2228,7 @@ Completeness:
 Soundness:
 \begin{itemize}
   \item for every $x$ such that $f(x) \neq y$
-  \item $P(out(V, x, r, P^{'}) = 1) \leq \delta$ for every $P^{'}, \delta_s \in [0, 1)$.
+  \item $P(out(V, x, r, P^{'}) = 1) \leq \delta_s$ for every $P^{'}, \delta_s \in [0, 1)$.
 \end{itemize}
 Computational soundness:
 \begin{itemize}
@@ -2166,7 +2237,7 @@ Computational soundness:
 \end{itemize}
 Zero-knowledge:
 \begin{itemize}
-  \item informal: verifier learns nothing behind the claim.
+  \item informally: verifier learns nothing behind the claim.
 \end{itemize}
 \begin{ex} \text{} \\
   Input: $G$ graph, \\
